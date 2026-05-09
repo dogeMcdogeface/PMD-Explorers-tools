@@ -1,0 +1,242 @@
+/* =========================
+   THEME: MODERN 
+========================= */
+:root[data-theme="modern"] {
+  --inner-grid-bg: #2e3440;
+  --inner-grid-border: #4c566a;
+
+  --input-border: #4c566a;
+  --input-bg: #eceff4;
+  --input-autofill-bg: #88c0d0;
+
+  --label-text-color: #e5e9f0;
+  --input-text-color: #2e3440;
+
+  --type-table-border: #4c566a;
+
+  --arrow-color: #ebcb8b;
+}
+
+/* =========================
+   THEME: SCIFI
+========================= */
+:root[data-theme="scifi"] {
+  --inner-grid-bg: #1f2933;
+  --inner-grid-border: #52606d;
+
+  --input-border: #52606d;
+  --input-bg: #f0f4f8;
+  --input-autofill-bg: #3ddc97;
+
+  --label-text-color: #e4e7eb;
+  --input-text-color: #102a43;
+
+  --type-table-border: #52606d;
+
+  --arrow-color: #ffb020;
+}
+
+/* =========================
+   THEME: PAPER
+========================= */
+:root[data-theme="paper"] {
+  --inner-grid-bg: #fff;
+  --inner-grid-border: #888;
+
+  --input-border: #000;
+  --input-bg: #ffffff;
+  --input-autofill-bg: #d6eaf8;
+
+  --label-text-color: #3e3a36;
+  --input-text-color: #000000;
+
+  --type-table-border: #b8afa6;
+
+  --arrow-color: #ccc;
+}
+
+
+/* =========================
+   THEME: DARK
+========================= */
+:root[data-theme="dark"] {
+  /* PANELS */
+  
+  --main-grid-bg: black;
+
+  --inner-grid-bg: #1e1f24;
+  --inner-grid-border: #3a3d46;
+
+  /* INPUTS */
+  --input-border: #3a3d46;
+  --input-bg: #2a2d35;
+  --input-autofill-bg: #3d5884;
+
+  /* TEXT */
+  --label-text-color: #d1d5db;
+  --input-text-color: #f9fafb;
+
+  /* TABLES */
+  --type-table-border: #3a3d46;
+
+  /* ACCENT */
+  --arrow-color: #f59e0b;
+}
+
+
+
+/* =========================
+   THEME: PASTEL
+========================= */
+:root[data-theme="pastel"] {
+  /* =========================
+     GRID LAYOUT COLORS
+  ========================= */
+
+  --main-grid-bg: #f7f7fb;          /* very soft lavender-tinted white */
+  --main-grid-border: transparent;
+
+  --inner-grid-bg: #e9ecf5;         /* soft cool pastel panel */
+  --inner-grid-border: #d6dbea;     /* subtle separation */
+
+  /* =========================
+     INPUT COLORS
+  ========================= */
+
+  --input-border: #c9cfe0;          /* gentle grey-blue */
+  --input-bg: #ffffff;              /* clean, readable */
+  --input-autofill-bg: #dff4ff;     /* soft pastel cyan highlight */
+
+  --label-text-color: #5a6078;      /* muted indigo-grey */
+  --input-text-color: #2f3345;      /* darker for readability */
+
+  /* =========================
+     TYPE TABLE
+  ========================= */
+
+  --type-table-border: #cfd6e6;
+
+  /* =========================
+     ARROWS
+  ========================= */
+
+  --arrow-color: #f2b5d4;           /* soft pink, distinct from text */
+}
+
+
+:root[data-theme="pokemon-red"] {
+  --main-grid-bg: #b71c1c;
+  --main-grid-border: #7f0000;
+
+  --inner-grid-bg: #f8d7da;
+  --inner-grid-border: #7f0000;
+
+  --input-border: #7f0000;
+  --input-bg: #ffffff;
+  --input-autofill-bg: #ffcccb;
+
+  --label-text-color: #3b0000;
+  --input-text-color: #1a1a1a;
+
+  --type-table-border: #7f0000;
+
+  --arrow-color: #ffeb3b; /* bright yellow → visible on red + over text */
+}
+
+
+:root[data-theme="pokemon-blue"] {
+  --main-grid-bg: #0d47a1;
+  --main-grid-border: #002171;
+
+  --inner-grid-bg: #e3f2fd;
+  --inner-grid-border: #002171;
+
+  --input-border: #1565c0;
+  --input-bg: #ffffff;
+  --input-autofill-bg: #bbdefb;
+
+  --label-text-color: #0d1b2a;
+  --input-text-color: #000000;
+
+  --type-table-border: #1565c0;
+
+  --arrow-color: #ffd54f; /* warm contrast vs blue */
+}
+
+:root[data-theme="pokemon-gold"] {
+  --main-grid-bg: #3e2723;
+  --main-grid-border: #1b0000;
+
+  --inner-grid-bg: #fff8e1;
+  --inner-grid-border: #8d6e63;
+
+  --input-border: #a1887f;
+  --input-bg: #ffffff;
+  --input-autofill-bg: #ffecb3;
+
+  --label-text-color: #4e342e;
+  --input-text-color: #2d2d2d;
+
+  --type-table-border: #8d6e63;
+
+  --arrow-color: #ffd700; /* gold highlight */
+}
+
+
+:root[data-theme="pmd-explorers"] {
+  --main-grid-bg: #0f172a; /* deep navy */
+  --main-grid-border: #1e293b;
+
+  --inner-grid-bg: #1e3a5f; /* bluish panels */
+  --inner-grid-border: #60a5fa;
+
+  --input-border: #93c5fd;
+  --input-bg: #f8fafc;
+  --input-autofill-bg: #bae6fd;
+
+  --label-text-color: #e0f2fe;
+  --input-text-color: #0f172a;
+
+  --type-table-border: #60a5fa;
+
+  --arrow-color: #facc15; /* bright yellow like PMD UI arrows */
+}
+
+:root[data-theme="pmd-rescue"] {
+  --main-grid-bg: #2b2b2b;
+  --main-grid-border: #000;
+
+  --inner-grid-bg: #f4e4c1; /* parchment */
+  --inner-grid-border: #8b6f47;
+
+  --input-border: #8b6f47;
+  --input-bg: #fffaf0;
+  --input-autofill-bg: #ffe4a3;
+
+  --label-text-color: #4a3725;
+  --input-text-color: #2b2b2b;
+
+  --type-table-border: #8b6f47;
+
+  --arrow-color: #ff8f00; /* warm amber */
+}
+
+
+:root[data-theme="pmd-dungeon"] {
+  --main-grid-bg: #020617;
+  --main-grid-border: #0f172a;
+
+  --inner-grid-bg: #0f172a;
+  --inner-grid-border: #334155;
+
+  --input-border: #475569;
+  --input-bg: #1e293b;
+  --input-autofill-bg: #334155;
+
+  --label-text-color: #e2e8f0;
+  --input-text-color: #f8fafc;
+
+  --type-table-border: #475569;
+
+  --arrow-color: #22c55e; /* glowing green (like dungeon tiles/minimap vibe) */
+}

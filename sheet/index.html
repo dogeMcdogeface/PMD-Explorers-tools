@@ -1,0 +1,3272 @@
+<!doctype html>
+<html  data-theme="pmd-explorers" lang="en">
+	<!-- HTML Meta Tags -->
+	<title>PMD Explorers! Sheet Builder</title>
+	<meta name="description" content="Sheet Generator for Explorers! A PMD RPG">
+	<!-- Facebook Meta Tags -->
+	<meta property="og:url" content="https://gaming.pipass.net/pmd-explorers/sheet.html">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="PMD Explorers! Sheet Builder">
+	<meta property="og:description" content="Sheet Generator for Explorers! A PMD RPG">
+	<meta property="og:image" content="https://gaming.pipass.net/pmd-explorers/preview.png">
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta property="twitter:domain" content="gaming.pipass.net">
+	<meta property="twitter:url" content="https://gaming.pipass.net/pmd-explorers/sheet.html">
+	<meta name="twitter:title" content="PMD Explorers! Sheet Builder">
+	<meta name="twitter:description" content="Sheet Generator for Explorers! A PMD RPG">
+	<meta name="twitter:image" content="https://gaming.pipass.net/pmd-explorers/preview.png">
+	<!-- Meta Tags Generated via https://www.opengraph.xyz --> 
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="stylesheet" href="styles.css">
+	<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+	<head>
+		<meta charset="UTF-8" />
+		<title>PMD Explorers! Sheet Builder</title>
+		<style>
+			/* =========================
+			BASE (fallback)
+			========================= */
+			:root {
+			/* =========================
+			HEADER COLORS
+			========================= */
+			--header-border: #000000AA;
+			--header-bg: #ddddddAA;
+			--header-content-color: #000000;
+			--header-content-bg: #ffffff;
+			/* =========================
+			GRID LAYOUT COLORS
+			========================= */
+			--main-grid-bg: #ffff;
+			--main-grid-border: transparent; /* currently none set */
+			--inner-grid-bg: #808080;
+			--inner-grid-border: #fff;
+			/* =========================
+			INPUT COLORS
+			========================= */
+			--input-border: #ccc;
+			--input-bg: #ffffff;
+			--input-autofill-bg: #e0f7ff;
+			--label-text-color: #000000;
+			--input-text-color: #000000;
+			/* =========================
+			DEBUG / SPECIAL STATES
+			========================= */
+			--labeled-input-debug-bg: #ff00ff10;
+			--labeled-input-debug-bg: #00000000;
+			/* =========================
+			TYPE TABLE
+			========================= */
+			--type-table-border: #ddd;
+			/* =========================
+			ARROWS
+			========================= */
+			--arrow-color: #ae9d72;
+			}
+			:root[data-theme="default"] {
+			}
+			@media print {
+			:root {
+			--input-autofill-bg: var(--input-bg )!important;
+			}
+			.pkm-type-name {
+			background-color: var(--input-bg) !important;
+			color: var(--input-text-color) !important;
+			text-shadow: none;
+			}  
+			}
+			/*https://fontmeme.com/fonts/pokemon-classic-font/*/
+			@font-face {
+			font-family: "PokemonClassic";
+			src:
+			url("./PokemonClassic-Regular.woff") format("woff");
+			url("./PokemonClassic-Regular.otf") format("opentype"),
+			url("./Pokemon Classic.ttf") format("truetype"),
+			}
+			body {
+			visibility: hidden;
+			margin: 0;
+			padding:0;
+			background-color: var(--main-grid-bg);
+			}
+			/*****************************************************************/
+			.main-grid {
+			background-color: var(--main-grid-bg);
+			border: var(--main-grid-border);
+			display: grid;
+			margin:10px;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(3, auto);
+			gap: 16px;
+			/* Force A4 size */
+			width: 210mm;
+			height: 297mm;
+			/* Optional: prevent shrinking */
+			min-width: 210mm;
+			min-height: 297mm;
+			max-width: 210mm;
+			max-height: 297mm;
+			/* Optional: ensure box-sizing includes padding/border */
+			box-sizing: border-box;
+			position: relative;
+			/* reference for absolute arrows */
+			}
+			/*****************************************************************/
+			.inner-grid {
+			border: 1px solid var(--inner-grid-border);
+			background-color: var(--inner-grid-bg);
+			padding: 00px;
+			display: grid;
+			grid-template-columns: repeat(var(--cols, 1), 1fr);
+			grid-template-rows: repeat(var(--rows, 1), 1fr);
+			gap: 0px;
+			position: relative;
+			/* content above arrows */
+			}
+			.inner-grid.trefoil-grid>labeled-input:last-child {
+			grid-column: span 2;
+			}
+			.inner-grid-bg {
+			position: absolute;
+			top: 50%;
+			left: 0;
+			width: 100%;
+			height: auto;
+			transform: translateY(-50%);
+			pointer-events: none;
+			z-index: 0;
+			display: block;
+			}
+			.inner-grid .title {
+			color: var(--label-text-color);
+			text-shadow: 1px 0 0 contrast-color(var(--label-text-color)), 2px 0 0 contrast-color(var(--label-text-color)), 0px 1px 0 contrast-color(var(--label-text-color)), 1px 1px 0 contrast-color(var(--label-text-color)), 2px 1px 0 contrast-color(var(--label-text-color)), 1px 1px 0 contrast-color(var(--label-text-color)), 2px 1px 0 contrast-color(var(--label-text-color)), 1px 2px 0 contrast-color(var(--label-text-color)), 2px 2px 0 contrast-color(var(--label-text-color));
+			grid-column: span var(--cols, 1);
+			text-transform: uppercase;
+			z-index: 5;
+			font-family: PokemonClassic;
+			font-size: 12px;
+			line-height: 1;
+			text-align: center;
+			padding: 2px;	
+			}
+			.header-row {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			padding: 0 1rem;
+			}
+			.header-row > :first-child {
+			flex: 1;             /* take all remaining space */
+			min-width: 0;        /* prevents overflow issues */
+			}
+			.header-row > :last-child {
+			flex: 0 0 min-content;
+			}
+			@layer base, override;
+			@layer base {				
+			/*****************************************************************/
+			labeled-input {
+			background-color: var(--labeled-input-debug-bg);
+			position: relative;
+			/* ensures z-index works */
+			z-index: 2;
+			/* higher than arrow-container */
+			position: relative;
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+			font-family: Arial, sans-serif;
+			box-sizing: border-box;
+			}
+			labeled-input label {
+			color: var(--label-text-color);
+			#text-shadow: 1px 1px 0 gray, 0px 1px 0 gray;
+			text-shadow: 1px 0 0 contrast-color(var(--label-text-color)), 2px 0 0 contrast-color(var(--label-text-color)), 0px 1px 0 contrast-color(var(--label-text-color)), 1px 1px 0 contrast-color(var(--label-text-color)), 2px 1px 0 contrast-color(var(--label-text-color)), 1px 1px 0 contrast-color(var(--label-text-color)), 2px 1px 0 contrast-color(var(--label-text-color)), 1px 2px 0 contrast-color(var(--label-text-color)), 2px 2px 0 contrast-color(var(--label-text-color));
+			font-family: "PokemonClassic", sans-serif;
+			margin-bottom: 2px;
+			margin-top: 4px;
+			font-size: 10px;
+			text-align: center;
+			/* center the text */
+			text-transform: uppercase;
+			/* all caps */
+			word-wrap: break-word;
+			/* older but widely supported */
+			overflow-wrap: break-word;
+			/* modern standard */
+			white-space: normal;
+			/* allow line breaks */
+			}
+			labeled-input textarea,
+			labeled-input input {
+			border: 1px solid var(--input-border);
+			color: var(--input-text-color);
+			#border: 1px solid #ccc;
+			border-radius: 4px;
+			text-align: center;
+			white-space: collapse;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
+			overflow: auto;
+			resize: none;
+			box-sizing: border-box;
+			}
+			labeled-input input.automath-ready {
+			text-decoration: underline;
+			}
+			labeled-input textarea[auto-filled],
+			labeled-input input[auto-filled] {
+			background-color:  var(--input-autofill-bg);
+			}
+			labeled-input textarea:not([auto-filled]),
+			labeled-input input:not([auto-filled]) {
+			background-color:  var(--input-bg);
+			}
+			/*****************************************************************/
+			labeled-input#character_name input {
+			font-size: 20px;
+			padding: 0px;
+			letter-spacing: 0.3ch;
+			}
+			/*****************************************************************/
+			input[type="checkbox"] {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			width: 15px !important;
+			height: 15px !important;
+			max-width: 15px;
+			max-height: 15px;
+			position: relative;
+			aspect-ratio: 1 / 1;
+			box-sizing: border-box;
+			background-color: var(--input-bg);
+			border: 2px solid var(--input-border);
+			color: var(--input-text-color); 
+			overflow: visible;
+			cursor: pointer;
+			transition: none;
+			}
+			input[type="checkbox"]:checked::before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 36px;
+			height: 36px;
+			transform: translate(-50%, -50%) scale(0.5);
+			transform-origin: center;
+			background:
+			linear-gradient(45deg,
+			transparent 45%,
+			currentColor 45%,
+			currentColor 55%,
+			transparent 55%
+			),
+			linear-gradient(-45deg,
+			transparent 45%,
+			currentColor 45%,
+			currentColor 55%,
+			transparent 55%
+			);
+			transition: none;
+			pointer-events: none;
+			}
+			input[type="checkbox"]:hover {
+			background-color: color-mix(in srgb, var(--input-bg), white 15%);
+			border-color: color-mix(in srgb, var(--input-border), gray 50%);
+			}
+			input[type="checkbox"]:checked:hover {
+			color: color-mix(in srgb, var(--input-text-color), black 20%);
+			}
+			/*  OPTIONAL: focus state for accessibility */
+			input[type="checkbox"]:active  {
+			background-color: color-mix(in srgb, var(--input-bg), white 55%);
+			border-color: color-mix(in srgb, var(--input-border), white 50%);
+			color: color-mix(in srgb, var(--input-text-color), gray 50%);
+			}
+			labeled-input input.input0 {
+			padding: 6px;
+			font-size: 14px;
+			box-sizing: border-box;
+			text-align: center;
+			/*! width: 100%;
+			*/
+			/*! min-width: 20ch;
+			*/
+			}
+			labeled-input div {
+			margin-top: auto;
+			}
+			/*****************************************************************/
+			labeled-input.image-box{
+			display: flex;
+			}
+			labeled-input.image-box div{
+			aspect-ratio: 1 / 1;
+			}
+			labeled-input.image-box input.input0{
+			height: 100%;
+			width:100%;
+			}
+			/*****************************************************************/
+			labeled-input.modifier-box input.input0 {
+			padding-bottom: 1em;
+			/* top/right/bottom/left: leave space for spinner on right */
+			}
+			labeled-input.modifier-box input.input1 {
+			position: absolute;
+			/* float on top of the primary input */
+			width: 55%;
+			/* half the width of the parent */
+			left: 50%;
+			/* center horizontally */
+			transform: translateX(-50%)translateY(0%);
+			bottom: 0px;
+			/* overlap the bottom of primary input */
+			box-sizing: border-box;
+			padding: 0.25em;
+			font-size: 12px;
+			/* align numbers to the right */
+			}
+			/*****************************************************************/
+			labeled-input.checkbox-list input[type="checkbox"] {
+			flex: 1 1 0;       /* allow each input to grow and shrink equally */
+			width: auto;
+			}		
+			labeled-input.checkbox-list div {
+			display: flex;
+			width:80%;
+			justify-content: space-evenly;
+			}		
+			/*****************************************************************/
+			labeled-input.wide input.input0 {
+			width: 100%;
+			}		
+			labeled-input.wide div {
+			width: 100%;
+			}				 
+			/*****************************************************************/
+			labeled-input.tall {
+			height: 100%;
+			}		
+			labeled-input.tall div {
+			height: 100%;
+			}
+			labeled-input.tall input.input0 {
+			height: 100%;
+			}
+			/*****************************************************************/
+			labeled-input.short {
+			height: 100%;
+			}		
+			labeled-input.short label {
+			margin-top: 0;
+			margin-bottom: 0; 
+			}
+			labeled-input.short div {
+			height: 100%;
+			}
+			labeled-input.short input.input0 {
+			height: 100%;
+			padding-top: 0;
+			padding-bottom: 0; 
+			}
+			/*****************************************************************/
+			labeled-input.square {
+			#aspect-ratio: 1 / 1;
+			/* keep it square */
+			align-self: end;
+			/* bottom of cell */
+			}
+			labeled-input.square input.input0 {
+			aspect-ratio: 1 / 1;
+			font-size: 20px;
+			/* keep it square */
+			width: 6ch;
+			text-align: center;
+			}
+			labeled-input.square div {
+			width: min-content;
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+			}
+			labeled-input.square label {
+			font-size: 10px;
+			line-height: 1.4;
+			letter-spacing: -2px;
+			}
+			/*****************************************************************/
+			labeled-input.proficient input#proficiency {
+			position: absolute;
+			/* float on top of the primary input */
+			width: 1.5em;
+			/* half the width of the parent */
+			aspect-ratio: 1 / 1;
+			left: 100%;
+			/* center horizontally */
+			transform: translateX(-100%);
+			bottom: 0px;
+			/* overlap the bottom of primary input */
+			box-sizing: border-box;
+			padding: 0px;
+			font-size: 12px;
+			}
+			labeled-input.proficient input[list]::-webkit-calendar-picker-indicator {
+			display: none !important;
+			}
+			/*****************************************************************/
+			labeled-input.vision-box input#vision_value {
+			position: absolute;
+			width: 50%;
+			left: 00%;
+			bottom: 0px;
+			box-sizing: border-box;
+			padding: 0px;
+			font-size: 12px;
+			height: 1.5em;
+			}
+			labeled-input.proficient input[list]::-webkit-calendar-picker-indicator {
+			display: none !important;
+			}
+			/*****************************************************************/
+			labeled-input.info-box {
+			display: grid;
+			grid-template-columns: 3fr 5fr;
+			column-gap: 0px;
+			height: 100%;
+			/* parent must have a defined height */
+			box-sizing: border-box;
+			}
+			/* Label */
+			labeled-input.info-box label {
+			margin: 0;
+			padding: 2px 4px;
+			font-size: 8px;
+			align-self: center;
+			line-height: 1;
+			letter-spacing: -0.5px;
+			}
+			/* Primary input */
+			labeled-input.info-box .input0 {
+			grid-column: 2;
+			grid-row: 1;
+			width: 100%;
+			padding: 1px;
+			font-size: 12px;
+			box-sizing: border-box;
+			height: auto;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 0;
+			}
+			/* Info-box input */
+			labeled-input.info-box .input1 {
+			grid-column: 1 / -1;
+			grid-row: 2;
+			width: 100%;
+			height: 100%;
+			padding: 2px;
+			font-size: 12px;
+			border-top-right-radius: 0;
+			border-top-left-radius: 0;
+			}
+			/*****************************************************************/
+			labeled-input.move-box {
+			}		
+			labeled-input.move-box div {
+			display: grid;
+			grid-template-columns: repeat(8, 1fr);
+			grid-template-rows: auto auto auto auto auto 1fr auto;
+			gap: 0;
+			height: 100%;
+			box-sizing: border-box;
+			}
+			labeled-input.move-box label{
+			grid-column: 1/4 ;
+			grid-row: 1;
+			margin: 0;
+			padding: 2px 2px;
+			font-size: 8px;
+			align-self: center;
+			line-height: 1;
+			letter-spacing: -0.5px;
+			}
+			labeled-input.move-box input{
+			width: 100%;
+			font-size: 10px;
+			padding: 1px;
+			}
+			labeled-input.move-box textarea{
+			font-size: 13px;
+			letter-spacing: -0.5px;
+			line-height: 0.8;
+			}
+			/* Row 1: name (full width) */
+			#move_name {
+			grid-column: 4 / -1;
+			grid-row: 1;
+			}
+			/* Row 2: type, category, level */
+			#move_type {
+			grid-column: 1 / 4;
+			grid-row: 2;
+			}
+			#move_category {
+			grid-column: 4 / -1;
+			grid-row: 2;
+			}
+			#pwr{
+			grid-column: 1 ;
+			grid-row: 3;	
+			font-size: 7px;
+			}
+			#move_power {
+			grid-column: 2 / 4;
+			grid-row: 3;
+			}
+			#move_level {
+			grid-column: 4/-1;
+			grid-row: 3;
+			}
+			/* Row 3: target, power, condition */
+			#move_target {
+			grid-column: 1/-1;
+			grid-row: 4;
+			letter-spacing: -0.5px;
+			}
+			#move_condition {
+			grid-column: 1/-1;
+			grid-row: 5;
+			letter-spacing: -0.5px;
+			}
+			/* Row 4: effect (spans full width and grows vertically) */
+			#move_effect {
+			grid-column: 1 / -1;
+			grid-row: 6;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			}
+			#PP{
+			grid-column: 1 ;
+			grid-row: 7;	
+			font-size: 7px;
+			}
+			/* Row 5: pp and pp_used */
+			#move_pp {
+			grid-column: 2/4 ;
+			grid-row: 7;
+			}
+			#Used{
+			grid-column: 4 ;
+			grid-row: 7;	
+			font-size: 7px;
+			}
+			#move_pp_used {
+			grid-column: 5/-1;
+			grid-row: 7;
+			}
+			/*****************************************************************/
+			labeled-input.type_relationship div{
+			height:100%
+			}
+			labeled-input input.input0[type="number"] {
+			/*font-size: 14px;*/
+			box-sizing: border-box;
+			/* ensure padding is inside width */
+			}
+			/* Chrome, Safari, Edge: move spinner to right */
+			labeled-input input[type=number]::-webkit-inner-spin-button,
+			labeled-input input[type=number]::-webkit-outer-spin-button {
+			display: none;
+			}
+			labeled-input input[type=number] {
+			-moz-appearance: textfield;
+			}
+			/* Hide spinners when printing */
+			@media print {
+			input[type=number]::-webkit-inner-spin-button,
+			input[type=number]::-webkit-outer-spin-button {
+			display: none;
+			}
+			input[type=number] {
+			-moz-appearance: textfield;
+			}
+			}
+			.type-table {
+			width: 100%;
+			height: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+			font-size: 10px;
+			text-transform: uppercase;
+			text-align: center;
+			}
+			.type-table td {
+			border-top: 0.5px solid var(--type-table-border);
+			}
+			/* right column */
+			.type-table td:last-child {
+			background-color: var(--input-autofill-bg);
+			border-radius: 100px;
+			line-height: 1;
+			font-family: PokemonClassic;
+			vertical-align: center;
+			}
+			.type-table td.type-name {
+			#background-color: var(--type-color, transparent);
+			font-family: PokemonClassic;
+			font-size: 8px;
+			padding: 0;
+			vertical-align: center;
+			}
+			/*****************************************************************/
+			arrow-connector {
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			z-index: 0;
+			/*0*/
+			padding: 0;
+			color: var(--arrow-color);
+			--arrow-short-threshold: 50;
+			--arrow-short-width: 40;
+			--arrow-short-height: 25;
+			--arrow-width: 15;
+			--arrow-height: 10;
+			--line-width: 4;
+			--arrow-mid-ratio: 0.48;
+			--arrow-padding: 0;
+			}
+			arrow-connector svg {
+			width: 100%;
+			height: 100%;
+			overflow: visible;
+			shape-rendering: geometricPrecision;
+			}
+			arrow-connector line {
+			stroke: currentColor;
+			stroke-width: var(--line-width, 2);
+			}
+			arrow-connector polygon {
+			fill: currentColor;
+			}
+			/*****************************************************************/
+			}
+			@layer override {
+			.pkm-type-name {
+			color: white;
+			text-shadow: 1px 1px 0 black, 0px 1px 0 black;
+			background-color: var(--type-color, revert-layer);
+			}
+			}	
+			/* ===== HEADER ===== */
+			#app-header {
+			position: sticky;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 20px;
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 0 16px;
+			background: var(--header-bg);
+			/* remove normal border */
+			border-bottom: none;
+			box-sizing: border-box;
+			backdrop-filter: blur(1px); /* adjust blur intensity */
+			-webkit-backdrop-filter: blur(1px); /* Safari support */
+			}
+			/* pseudo-element for “external” border */
+			#app-header::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			bottom: -1px; /* height of the border, outside element */
+			width: 100%;
+			height: 1px;
+			background: var(--header-border);
+			pointer-events: none; /* doesn’t interfere with clicks */
+			}
+			/* push theme selector to the right */
+			#theme-wrapper {
+			margin-left: auto;
+			display: flex;
+			align-items: center;
+			gap: 4px; /* space between label and select */
+			padding: 0;
+			}
+			#app-header *{
+			height: 100%;   /* match header height */
+			}
+			#theme-wrapper label {
+			display: flex;
+			align-items: center;  /* ensures perfect vertical centering */
+			}
+			#app-header a,
+			#app-header button,
+			#app-header select {
+			font-family: Arial, sans-serif;
+			font-size: 14px;
+			padding: 0 8px; /* horizontal padding */
+			min-height: 0;  /* avoid overflowing header */
+			border: none;   /* remove default borders */
+			background: var(--header-content-bg);
+			color: var(--header-content-color);
+			text-decoration: none;
+			cursor: pointer;
+			box-sizing: border-box;
+			display: flex;
+			align-items: center; /* vertically center text */
+			justify-content: center;
+			}
+			/* ===== PRINT: REMOVE HEADER ===== */
+			@media print {
+			#app-header {
+			display: none !important;
+			}
+			}
+			/*****************************************************************/
+		</style>
+	</head>
+	<body>
+		<div id="app-header">
+			<a id="project-link" href="https://www.explorers-pmd-rpg.com/" target="_blank">
+			PMD Explorers!
+			</a>
+			<a id="project-link" href="https://gaming.pipass.net/pmd-explorers/" target="_blank">
+			PMD-E! Tools
+			</a>
+			<button onclick="window.print()">Save Sheet</button>
+			<button onclick="window.clearURLAndReload()">Clear Sheet</button>
+			<div id="theme-wrapper">
+				<label for="theme-select">Theme:</label>
+				<select id="theme-select"></select>
+			</div>
+		</div>
+		<div class="main-grid">
+			<!-- Row 1 -->
+			<div class="inner-grid" >
+				<!--<img class="inner-grid-bg" src="https://images.squarespace-cdn.com/content/v1/687138536b4149458b52fd07/24dbe7c6-081a-4ed2-9bf3-834366ad32e2/ExplorersLogov2Green.png?format=1500w" />
+					-->
+			</div>
+			<div class="inner-grid header-row">
+				<labeled-input type="wide tall" label="Character Name" style="grid-column: span 17;"></labeled-input>
+				<labeled-input label="Level" type="wide number"></labeled-input>
+			</div>
+			<!-- Row 2 -->
+			<!-- This one has TWO elements -->
+			<div class="inner-grid">
+				<labeled-input type="image-box" label="Appearance"></labeled-input>
+				<labeled-input type="" updatefn="fn_suggest_species" label="Species"></labeled-input>
+				<div class="inner-grid" style="--cols: 2">
+					<labeled-input updatefn="fn_compute_type" label="Type1" type="wide pkm-type-name" ></labeled-input>
+					<labeled-input updatefn="fn_compute_type" label="Type2"type="wide pkm-type-name" ></labeled-input>
+				</div>
+				<div class="inner-grid" style="--cols: 2">
+					<labeled-input id="height" type="wide number" updatefn="fn_compute_height" label="Height(m)"></labeled-input>
+					<labeled-input type="wide" updatefn="fn_compute_size" label="Size"></labeled-input>
+				</div>
+				<labeled-input label="Origin" type="" updatefn="fn_suggest_origin"></labeled-input>
+				<labeled-input label="Class" type="" updatefn="fn_suggest_class"></labeled-input>
+				<labeled-input label="Specialization" type="" updatefn="fn_suggest_specialization"></labeled-input>
+				<div class="inner-grid" style="--cols: 2">
+					<labeled-input label="Nature" type="wide" updatefn="fn_suggest_nature" ></labeled-input>
+					<labeled-input label="Color" type="wide" updatefn="fn_suggest_color" ></labeled-input>
+				</div>
+			</div>
+			<div class="inner-grid">
+				<div class="inner-grid" style="--cols: 7">
+					<labeled-input type="square modifier-box" updatefn="fn_modifier_hp" label="HP"></labeled-input>
+					<labeled-input type="square modifier-box" updatefn="fn_modifier" label="ATK"></labeled-input>
+					<labeled-input type="square modifier-box" updatefn="fn_modifier" label="DEF"></labeled-input>
+					<labeled-input type="square modifier-box" updatefn="fn_modifier" label="SP.ATK"></labeled-input>
+					<labeled-input type="square modifier-box" updatefn="fn_modifier" label="SP.DEF"></labeled-input>
+					<labeled-input type="square modifier-box" updatefn="fn_modifier" label="IQ"></labeled-input>
+					<labeled-input type="square modifier-box" updatefn="fn_modifier" label="SPE"></labeled-input>
+					<labeled-input type="square" label="current HP"></labeled-input>
+					<labeled-input type="square proficient" updatefn="fn_proficiency"label="STRENGTH"></labeled-input>
+					<labeled-input type="square proficient" updatefn="fn_proficiency"label="PHYS.STATUS RESISTANCE"></labeled-input>
+					<labeled-input type="square proficient vision-box" updatefn="fn_compute_visible_tiles"label="AWARENESS"></labeled-input>
+					<labeled-input type="square proficient" updatefn="fn_proficiency"label="SP.STATUS RESISTANCE"></labeled-input>
+					<div></div>
+					<!-- <labeled-input type="square modifier-box" label="IQ SKILLS"></labeled-input> -->
+					<labeled-input type="square" updatefn="fn_battle_movement"label="Battle Movement"></labeled-input>
+				</div>
+				<div class="inner-grid" style="--cols: 7">
+					<div class="inner-grid" style="--cols: 1; --rows: 2">
+						<labeled-input type="square proficient" updatefn="fn_proficiency" label="ENDURANCE"></labeled-input>
+					</div>
+					<div class="inner-grid" style="--cols: 3; grid-column: 2 / 7">
+						<div class="inner-grid trefoil-grid" style="--cols: 2">
+							<div id="social" class="title"style="font-weight:800;">sOCIAL</div>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="influence"></labeled-input>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="deceive"></labeled-input>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="intuition"></labeled-input>
+						</div>
+						<div class="inner-grid trefoil-grid" style="--cols: 2">
+							<div class="title" style="font-weight:800;">Exploration</div>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="tracking"></labeled-input>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="ecology"></labeled-input>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="sneak"></labeled-input>
+						</div>
+						<div class="inner-grid trefoil-grid" style="--cols: 2">
+							<div class="title"style="font-weight:800;">Intellect</div>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="memory"></labeled-input>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="logic"></labeled-input>
+							<labeled-input type="square proficient" updatefn="fn_proficiency"label="traps"></labeled-input>
+						</div>
+					</div>
+					<div class="inner-grid" style="--cols: 1; --rows: 2">
+						<labeled-input type="square proficient" updatefn="fn_proficiency"label="MOVEMENT Skill"></labeled-input>
+					</div>
+				</div>
+				<div class="inner-grid" style="--cols: 3">
+					<div class="inner-grid" style="--cols: 4; grid-column: span 2;">
+						<labeled-input label="Move Ⅰ" type="move-info" updatefn="fn_move"></labeled-input>
+						<labeled-input label="Move Ⅱ" type="move-info" updatefn="fn_move"></labeled-input>
+						<labeled-input label="Move Ⅲ" type="move-info" updatefn="fn_move"></labeled-input>
+						<labeled-input label="Move Ⅳ" type="move-info" updatefn="fn_move"></labeled-input>
+					</div>
+					<div class="inner-grid" style="--cols: 1">
+						<labeled-input label="friendship track" type="checkbox"></labeled-input>
+						<div class="inner-grid" style="--cols: 2">
+							<labeled-input label="Friendship Dice" type="wide"></labeled-input>
+							<labeled-input label="Times Cleared" type="wide"></labeled-input>
+						</div>
+						<div class="inner-grid" style="--cols: 2">
+							<div class="title">adventure tokens</div>
+							<labeled-input label="Available" type="wide" ></labeled-input>
+							<labeled-input label="Maximum" type="wide" updatefn="fn_max_adventure_tokens"></labeled-input>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Row 3 -->
+			<div class="inner-grid" style="--rows: 0">
+				<div class="title">conditions</div>
+				<labeled-input type="short" updatefn="fn_suggest_status"></labeled-input>
+				<labeled-input type="short" updatefn="fn_suggest_status"></labeled-input>
+				<labeled-input type="short" updatefn="fn_suggest_status"></labeled-input>
+				<labeled-input type="short" updatefn="fn_suggest_status"></labeled-input>
+				<labeled-input type="short" updatefn="fn_suggest_status"></labeled-input>
+				<labeled-input type="short" updatefn="fn_suggest_status"></labeled-input>
+			</div>
+			<div class="inner-grid" style="--cols: 2">
+				<div class="inner-grid" style="--cols: 1">
+					<labeled-input label="Held Item" type="tall"></labeled-input>
+					<labeled-input label="Money"></labeled-input>
+				</div>
+				<div class="inner-grid" style="--cols: 3; --rows:0">
+					<div class="title">backpack</div>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+					<labeled-input type="short"></labeled-input>
+				</div>
+			</div>
+			<div class="inner-grid">
+				<labeled-input label="Weaknesses" type="type_relationship" updatefn="fn_type_relation"></labeled-input>
+			</div>
+			<div class="inner-grid" style="--cols: 2">
+				<labeled-input label="Origin Feature" updatefn="fn_feature_origin" type="info-box"></labeled-input>
+				<labeled-input label="Class Ability" updatefn="fn_ability_class" data-level="0" type="info-box"></labeled-input>
+				<labeled-input label="Class Feature lv5" updatefn="fn_ability_class" data-level="5" type="info-box"></labeled-input>
+				<labeled-input label="Class Feature lv10" updatefn="fn_ability_class" data-level="10" type="info-box"></labeled-input>
+				<labeled-input label="Specialization Feature lv2" updatefn="fn_feature_specialization" data-level="2" type="info-box"></labeled-input>
+				<labeled-input label="Specialization Feature lv4" updatefn="fn_feature_specialization" data-level="4" type="info-box"></labeled-input>
+				<labeled-input label="Specialization Feature lv7" updatefn="fn_feature_specialization" data-level="7" type="info-box"></labeled-input>
+				<labeled-input label="Rare Quality lv3" updatefn="fn_feature_quality" data-level="3" type="info-box"></labeled-input>
+				<labeled-input label="Rare Quality lv6" updatefn="fn_feature_quality" data-level="6" type="info-box"></labeled-input>
+				<labeled-input label="Rare Quality lv9" updatefn="fn_feature_quality" data-level="9" type="info-box"></labeled-input>
+				<labeled-input updatefn="fn_feature_generic" type="info-box"></labeled-input>
+				<labeled-input updatefn="fn_feature_generic" type="info-box"></labeled-input>
+			</div>
+			<div class="arrow-container">
+				<arrow-connector from="#hp" to="#current_hp .input0"></arrow-connector>
+				<arrow-connector from="#atk" to="#strength .input0"></arrow-connector>
+				<arrow-connector from="#def" to="#physstatus_resistance .input0"></arrow-connector>
+				<arrow-connector from="#spatk" to="#awareness .input0"></arrow-connector>
+				<arrow-connector from="#spdef" to="#spstatus_resistance .input0"></arrow-connector>
+				<arrow-connector from="#iq" to="#influence label, #deceive label, #intuition label, #tracking label, #ecology label, #sneak label, #memory label, #logic label, #traps label"></arrow-connector>
+				<arrow-connector from="#iq" to="#trap s.input0"></arrow-connector>
+				<arrow-connector from="#current_hp" to="#endurance .input0"></arrow-connector>
+				<arrow-connector from="#spe" to="#battle_movement .input0"></arrow-connector>
+				<arrow-connector from="#battle_movement" to="#movement_skill .input0"></arrow-connector>
+			</div>
+		</div>
+		<script type="module">
+			const type_colors = {
+				normal: '#A8A77A',
+				fire: '#EE8130',
+				water: '#6390F0',
+				electric: '#F7D02C',
+				grass: '#7AC74C',
+				ice: '#96D9D6',
+				fighting: '#C22E28',
+				poison: '#A33EA1',
+				ground: '#E2BF65',
+				flying: '#A98FF3',
+				psychic: '#F95587',
+				bug: '#A6B91A',
+				rock: '#B6A136',
+				ghost: '#735797',
+				dragon: '#6F35FC',
+				dark: '#705746',
+				steel: '#B7B7CE',
+				fairy: '#D685AD'
+			};
+			
+			
+			const natures_lookup = {
+				"Quiet": "Blue",
+				"Mild": "Brown",
+				"Relaxed": "Green",
+				"Lonely": "Sapphire",
+				"Impish": "Magenta",
+				"Gentle": "Mint",
+				"Calm": "Olive",
+				"Adamant": "Orange",
+				"Jolly": "Pink",
+				"Careful": "Purple",
+				"Hasty": "Red",
+				"Brave": "Silver",
+				"Quirky": "Lime",
+				"Bold": "Violet",
+				"Modest": "Turquoise",
+				"Sassy": "Yellow",
+				"Rash": "Pearl",
+				"Serious": "Black",
+				"Hardy": "Scarlet",
+				"Docile": "Diamond",
+				"Naive": "White",
+				"Lax": "Platinum",
+				"Bashful": "Gold",
+				"Naughty": "Ruby",
+				"Timid": "Emerald",
+			}
+			
+			const sizes_lookup = {
+				2: {
+					"label": "Tiny",
+					"tiles": 1
+				},
+				4: {
+					"label": "Small",
+					"tiles": 1
+				},
+				8: {
+					"label": "Medium",
+					"tiles": 1
+				},
+				12: {
+					"label": "Large",
+					"tiles": 2
+				},
+				999: {
+					"label": "Huge",
+					"tiles": 3
+				},
+			};
+			
+			
+			const awareness_to_visible_tiles_lookup = {
+			  1: 1,	//Undefined in Manual...
+			  2: 5,
+			  4: 6,
+			  6: 7,
+			  9: 8,
+			  10: 9,
+			  12: 10,
+			  14: 11,
+			  16: 12,
+			  19: 13,
+			  20: 14,
+			  22: 15,
+			  24: 16,
+			  26: 17,
+			  29: 18,
+			  30: 19,
+			  32: 20,
+			  34: 21,
+			  36: 22,
+			  39: 23,
+			  40: 24
+			};
+			
+			
+			const proficiency_lookup = {
+				"-": {
+					"dice": "1d6",
+					"movement_bonus": 0,
+					"visibility_tiles_bonus": 0,
+				},
+				"m": {
+					"dice": "2d6",
+					"movement_bonus": 2,
+					"visibility_tiles_bonus": 1,
+				},
+				"M": {
+					"dice": "3d6",
+					"movement_bonus": 4,
+					"visibility_tiles_bonus": 2,
+				},
+			}
+			
+			
+			//typechart.js uses the values on the left to represent the damage multipliers on the right
+			const type_multiplier_values = {
+				0: 1.0,
+				1: 2.0,
+				2: 0.5,
+				3: 0.0,
+			};
+			const type_multiplier_strings = {
+				1.00: ["1", " No Effect"],
+				2.00: ["2", "Super Effective"],
+				0.50: ["½", "Not Very Effective"],
+				0.00: ["0", "No Effect"],
+				0.25: ["¼", "Mostly Ineffective"],
+				4.00: ["4", "Extremely Effective"],
+			};
+			const advantage_string = "*"//"(adv)"
+			
+			
+			const statuses_lookup = {
+				"stat up": "Your Stat Modifier increases, where (x) is the number shown.",
+				"stat down": "Your Stat Modifier decreases, where (x) is the number shown.",
+				"paralyzed": "When using a move whilst Paralyzed, roll a d6. On a 1 or 2, the Pokémon instead does not use the move. The Pokémon’s Movement is also reduced by 1 until they are cured.",
+				"burned": "At the start of their first turn whilst afflicted, the Pokémon takes 1d6 damage, and each round of battle thereafter. Their Atk modifier is lowered by 2 until they are cured. Burn deals no damage outside of battle. Fire-Type Pokémon cannot be Burned.",
+				"poisoned": "At the start of their first turn, and each round of Battle thereafter when Poisoned, the Pokémon takes 1d6 damage. After every 3 turns outside of Battle, they take 1d6 damage. Steel-Type and Poison-Type Pokémon cannot be Poisoned.",
+				"badly poisoned": "At the start of their turn, the Pokémon takes 1d6 damage, and an additional 1d6 damage for each turn they have been Badly Poisoned. Steel-Type and Poison-Type Pokémon cannot be Badly Poisoned.",
+				"frozen": "A Frozen Pokémon takes no Actions and cannot move. At the start of their first turn whilst Frozen, and the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to thaw out. Whilst Frozen, the Pokémon only takes damage from Fire type attacks. A Fire type attack, or the Burned Condition, thaws them early. Ice-Type Pokémon cannot be Frozen.",
+				"asleep": "At the start of their first turn whilst Asleep, the Pokémon rolls 1d6. They are Asleep for that many rounds. Whilst Asleep, the Pokémon does nothing. When starting subsequent turns whilst Asleep, you roll 1d6. Subtract the number of turns the Pokémon has been Asleep from 6. If the Pokémon rolls equal to or higher than the Target Number, they lose the Asleep condition. Attacking a Pokémon that is Asleep will end the Condition early.",
+				"flinched": "The Pokémon cannot use a Move this Round. This condition ends after the afflicted Pokémon’s turn ends.",
+				"confused": "At the start of their first turn whilst Confused, the Pokémon rolls 1d6. On a 1-2, they are Confused for 1 round. On a 3-4, they are Confused for 2 rounds. On a 5-6, they are Confused for 3 rounds. When a Confused Pokémon begins using Movement, roll 1d6. Consult the following table to determine their direction: 1 The Pokémon moves North, if it can. 2 The Pokémon moves East, if it can. 3 The Pokémon moves South, if it can. 4 The Pokémon moves West, if it can. 5 The Pokémon has control of its movement this turn. 6 The Pokémon’s Confused condition ends. When a Confused Pokémon uses an Attack or Move, roll 1d6. Consult the following table to determine the action: 1 The Pokémon hits a nearby ally with their Attack or Move, if within range. Otherwise, it hits itself for 1d6 damage. 2 The Pokémon hits itself in confusion, dealing 1d6 damage to themselves. 3 The Pokémon hits a random target, friend or foe, within range. Designate each Pokémon in range a number, or set of numbers, and roll a d6 to determine the target. Use additional d6’s as necessary. If there is an odd number in the list of available targets, include the Confused Pokémon. 4 The Pokémon has control of its Attack or Move this turn. 5 The Pokémon’s Confused condition ends. 6 The Pokémon’s Confused condition ends.",
+				"restrained": "Pokémon cannot use Movement whilst Restrained, and have Disadvantage on Movement Checks. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check, or Strength check, again to attempt to break free.",
+				"blinded": "A Blinded Pokémon cannot see. When a Pokémon with the Blinded Condition makes an Attack, it must roll a d6. On 3 or lower, the Pokémon misses. On a 4-5, the Pokémon hits. On a 6, the target is no longer Blinded, and their attack hits. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to regain their vision.",
+				"yawning": "The Pokémon will be affected by the Asleep condition at the start of their next turn.",
+				"trapped": "The Pokémon is Restrained, and takes the 1d6 damage of the Move’s type at the start of their next turn. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to break free.",
+				"frightened": "A Frightened Pokémon’s Movement is halved when moving towards the Pokémon that Frightened it. It has Disadvantage on Move rolls against the Pokémon that Frightened it. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to overcome their fear.",
+				"silenced": "A Pokémon with this Condition cannot use Sound-based Moves. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to regain their voice.",
+				"invisible": "A Pokémon with this Condition cannot be seen by normal means. They roll 1 extra dice when making a Sneak Check. This effect ends once the Invisible Pokémon makes an attack.",
+				"infatuated": "When a Pokémon with this condition uses a Move against the Pokémon that Infatuated it, it has Disadvantage. Its Movement is halved when going in a direction that is away from the Pokémon that Infatuated it. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to clear their head.",
+				"taunted": "A Taunted Pokémon must attack the target that Taunted it. Your Movement is halved when going in a direction that is away from the Pokémon that Taunted you. At the start of each subsequent turn, the Pokémon can roll the appropriate Status Resistance Check again to attempt to no longer be Taunted.",
+				"counter": "Physical Moves targeted at a Pokémon with Counter status deal half their damage back to the attacker.",
+				"mirror coat": "Special Moves targeted at a Pokémon with Mirror Coat status deal half their damage back to the attacker."
+			};
+			
+			
+			
+			
+			
+			const origins_lookup = [
+				"guild intern",
+				"noble",
+				"fallen noble",
+				"wanderer",
+				"outlaw",
+				"mystic",
+				"survivor",
+				"archeologist",
+				"tribal",
+				"sleuth",
+				"merchant",
+				"human"
+			];
+			
+			
+			const classes_lookup = {
+				"explorer": {
+					startingHP: 25,
+					levelHP: 15,
+					majorSkills: ["Exploration"],
+					specializations: ["Survivalist", "Treasure Hunter"]
+				},
+				"mission expert": {
+					startingHP: 25,
+					levelHP: 15,
+					majorSkills: ["Exploration"],
+					specializations: ["First Responder", "Bounty Hunter"]
+				},
+				"strategist": {
+					startingHP: 20,
+					levelHP: 10,
+					majorSkills: ["Intellect"],
+					specializations: ["Tactician", "Sharpshooter"]
+				},
+				"icon": {
+					startingHP: 20,
+					levelHP: 10,
+					majorSkills: ["Social"],
+					specializations: ["Team Leader", "Silver-Tongued"]
+				},
+				"guardian": {
+					startingHP: 30,
+					levelHP: 20,
+					majorSkills: ["Endurance"],
+					specializations: ["Aegis", "Ward"]
+				},
+				"brawler": {
+					startingHP: 25,
+					levelHP: 15,
+					majorSkills: ["Strength"],
+					specializations: ["Rapid", "Fury"]
+				},
+				"specialist": {
+					startingHP: 25,
+					levelHP: 15,
+					majorSkills: ["Awareness"],
+					specializations: ["Swift", "Patient"]
+				}
+			};
+			
+			
+			const MAX_STAT_MODIFIER = 99;
+			const MIN_STAT_MODIFIER = 1;
+			
+			const stat_to_modifier_formula = (val) => {
+				const base_modifier = Math.floor((val - 1) / 5) + 1;
+				const clamped_modifier = clamp(base_modifier, MIN_STAT_MODIFIER, MAX_STAT_MODIFIER);
+				return clamped_modifier;
+			};
+			
+			const stat_to_modifier_hp_formula = (val) => {
+				const base_modifier = Math.floor(stat_to_modifier_formula(val) / 2);
+				const clamped_modifier = clamp(base_modifier, MIN_STAT_MODIFIER, MAX_STAT_MODIFIER);
+				return clamped_modifier;
+			};
+			
+			
+			const max_hp_formula = (poke_level, poke_class) => {
+				const class_hp_base = poke_class.startingHP
+				const class_hp_increase = poke_class.levelHP
+			
+				const max_hp = class_hp_base + class_hp_increase * Math.max(poke_level - 1, 0);
+			
+				return max_hp;
+			};
+			
+			const max_adventure_token_formula = (poke_level) => {
+				const modifier = poke_level + 1
+				const clamped_modifier = clamp(modifier, 1, Infinity);
+				return clamped_modifier;
+			};
+			
+			
+			const speed_modifier_to_battle_formula = (speed_modifier, proficiency_bonus) => {
+				const base_movement = Math.floor(speed_modifier / 2) + 1;
+				const clamped_movement = clamp(base_movement, MIN_STAT_MODIFIER, MAX_STAT_MODIFIER);
+				const boosted_movement = clamped_movement + proficiency_bonus;
+			
+				return boosted_movement;
+			};
+			
+			
+			
+			/*****************************************************************************/
+			
+			
+			const DATA_SOURCES = {
+				pokemon_list: {
+					url: "https://play.pokemonshowdown.com/data/pokedex.js",
+					type: "exec",
+					transform: (exports) => exports.BattlePokedex,
+				},
+			
+				pokemon_names: {
+					from: "pokemon_list",
+					transform: (pokemon_list) =>
+						Object.values(pokemon_list)
+							.map(p => p.name)
+							.filter(Boolean),
+				},
+			
+				type_effect_lookup: {
+					url: "https://play.pokemonshowdown.com/data/typechart.js",
+					type: "exec",
+					transform: (exports) =>
+						Object.fromEntries(
+							Object.entries(exports.BattleTypeChart).map(([type, data]) => [
+								type.toLowerCase(),
+								Object.fromEntries(
+									Object.entries(data.damageTaken || {}).map(
+										([targetType, code]) => [targetType.toLowerCase(),type_multiplier_values[code] ?? 1.0])
+								)
+							])
+						),
+				},
+			
+				moves_list: {
+					url: "moves.tsv",
+					type: "text",
+					transform: (text) => {
+						const arr = parseTSVToObjects(text);
+						return Object.fromEntries(arr.map(({ name, ...rest }) => [name, rest]));
+					},
+				},
+			
+				all_features_list: {
+					url: "all_features.tsv",
+					type: "text",
+					transform: (text) => {
+						const arr = parseTSVToObjects(text);
+						return Object.fromEntries(
+							arr
+								.filter(r => r.name?.trim())
+								.map(({ name, ...rest }) => [name.toLowerCase(), rest])
+						);
+					},
+				},
+			};
+			
+			async function fetchAndExec(url) { const res = await fetch(url); const text = await res.text(); const exportsObj = {}; new Function("exports", text)(exportsObj); return exportsObj; }
+			async function loadExternalData() {
+				console.info("Loading external data...");
+			
+				const results = {};
+			
+			// --- create all globals with defaults immediately ---
+				for (const [key, cfg] of Object.entries(DATA_SOURCES)) {
+					results[key] = null;
+					globalThis[key] = null;
+				}
+			
+			
+				// --- Step 1: load all "raw sources" in parallel ---
+				await Promise.all(
+					Object.entries(DATA_SOURCES)
+						.filter(([_, cfg]) => cfg.url)
+						.map(async ([key, cfg]) => {
+							const data = cfg.type === "text"
+								? await fetch(cfg.url).then(r => r.text())
+								: await fetchAndExec(cfg.url);
+			
+							results[key] = cfg.transform(data);
+							console.info(`${key} loaded`);
+						})
+				);
+			
+				// --- Step 2: resolve derived values (like pokemon_names) ---
+				for (const [key, cfg] of Object.entries(DATA_SOURCES)) {
+					if (!cfg.from) continue;
+			
+					results[key] = cfg.transform(results[cfg.from]);
+					console.info(`${key} derived`);
+				}
+			
+				// --- Step 3: expose globally ---
+				Object.assign(globalThis, results);
+			
+				console.info("All data loaded:", results);
+			
+				verifyTypeConsistency();
+				updateGlobalStatus();
+			}
+			
+			
+			
+			// Call the loader
+			loadExternalData();
+			window.addEventListener("DOMContentLoaded", () => {
+				loadFromURL();
+				updateGlobalStatus();
+			});
+			
+			
+			function parseTSVToObjects(text) {
+				const [head, ...lines] = text.split('\n');
+			
+				const headers = head
+					.split('\t')
+					.map(h =>
+						h
+						.replace(/\[|\]/g, '')
+						.trim()
+						.toLowerCase()
+						.replace(/\s+/g, '_')
+					);
+			
+				return lines
+					.filter(l => l && !l.startsWith(head))
+					.map(l => {
+						const obj = {};
+						l.split('\t').forEach((v, i) => {
+							v = v?.trim();
+							if (v) obj[headers[i]] = v;
+						});
+						return obj;
+					})
+					.filter(o => Object.keys(o).length);
+			}
+			
+			
+			/*****************************************************************************/
+			
+			
+			// Ensures the species input has the full list of Pokémon names as suggestions.
+			// Only updates the suggestions if they are out of sync to avoid unnecessary DOM work.
+			globalThis.fn_suggest_species = (el) => {
+				if (!pokemon_names) return
+				el.setSuggestions(pokemon_names);
+			};
+			
+			
+			globalThis.fn_suggest_origin = (el) => {
+				el.setSuggestions(origins_lookup.map(capitalizeWords));
+			};
+			
+			
+			globalThis.fn_suggest_class = (el) => {
+				el.setSuggestions(Object.keys(classes_lookup).map(capitalizeWords));
+			};
+			
+			globalThis.fn_suggest_status = (el) => {
+				el.setSuggestions(Object.keys(statuses_lookup).map(capitalizeWords));
+			};
+			
+			
+			globalThis.fn_suggest_specialization = (el) => {
+				const poke_class = document.querySelector("#class").primaryValue.toLowerCase();
+			
+				let available_specializations
+			
+				available_specializations = classes_lookup[poke_class]?.specializations
+			
+				if (!available_specializations) {
+					available_specializations = Object.values(classes_lookup).flatMap(cls => cls.specializations);
+			
+				}
+				el.setSuggestions(available_specializations.map(capitalizeWords));
+			
+			};
+			
+			globalThis.fn_move = (el) => {
+			
+				const p = get_selected_pokemon();
+			
+				const moves_names = Object.keys(moves_list || {});
+				el.setSuggestions(moves_names.map(capitalizeWords));
+			
+				// normalize input
+				const moveKey = (el.primaryValue || "").trim().toLowerCase();
+			
+				// find real key (case-insensitive)
+				const realKey = moves_names.find(
+					k => k.toLowerCase() === moveKey
+				);
+			
+				const move = moves_list?.[realKey] || {};
+			
+				// assign directly via generated setters
+				el.move_level = move.level || "";
+				el.move_type = move.type || "";
+				el.move_category = move.category || "";
+				el.move_power = move.power || "";
+				el.move_target = move.targets || "";
+				el.move_effect = move.other_effects || "";
+				el.move_condition = (move.conditions || "")
+					.replace(/down/gi, "↓")
+					.replace(/up/gi, "↑")
+					.replace(/\./g, "");;
+				el.move_pp = move.pp || "";
+			
+			
+				const move_power = parseInt(el.move_power || "")
+				const moveType = (el.move_type || "").toLowerCase();
+				const hasSameType = p?.types?.some(t => t.toLowerCase() === moveType);
+			
+			
+				if (hasSameType) {
+			
+					el.move_power = move_power + " " + advantage_string
+			
+				}
+			};
+			
+			/*****************************************************************************/
+			globalThis.fn_feature_generic = (el, options = {}) => {
+				const {
+					type = null,
+					prerequisiteValue = null,
+					requiredLevel = false,
+					autoSelectExactPrerequisite = false
+				} = options;
+			
+			
+				const level = Number(el.dataset.level || 0);
+				const cleanPrerequisiteValue = prerequisiteValue?.toLowerCase() || ""
+			
+				if (!all_features_list) return
+			
+			
+				const featureNames = Object.keys(all_features_list || {}).filter(k => {
+					const feature = all_features_list[k];
+			
+					if (type && feature.type !== type) return false;
+			
+					if (requiredLevel && feature.level_prerequisite != level) return false;
+			
+					if (cleanPrerequisiteValue) {
+						const prerequisite = feature.prerequisite?.toLowerCase() || "";
+							if (!prerequisite.includes(cleanPrerequisiteValue)) return false;
+					}
+			
+					return true;
+				});
+			
+				el.setSuggestions(featureNames.map(capitalizeWords));
+			
+				// Auto-select matching feature if requested
+				if (autoSelectExactPrerequisite && cleanPrerequisiteValue) {
+					const feature = featureNames.find(key => {
+						return all_features_list[key].prerequisite?.toLowerCase() === cleanPrerequisiteValue;
+					});
+			
+					el.primaryValue = capitalizeWords(feature) || "";
+				}
+			
+				// Read the current feature name, user could have manually written something
+				const actual_feature = el.primaryValue.toLowerCase();
+				const featureData = all_features_list[actual_feature];
+			
+				const effect = capitalizeWords(featureData?.effect || "");
+				const featureType = featureData?.type || "";
+				const featureLevel = featureData?.level_prerequisite || "";
+				const prerequisite = capitalizeWords(featureData?.prerequisite || "");
+			
+				// Special formatting for qualities
+				if (featureType === "Rare Quality") {
+					el.secondaryValue = effect
+						? `(req: lv${featureLevel}${prerequisite ? " & " + prerequisite : ""}) ${effect}`
+						: "";
+				} else {
+					el.secondaryValue = effect;
+				}
+			};
+			
+			globalThis.fn_feature_origin = (el) => {
+				globalThis.fn_feature_generic(el, {
+					type: "Origin Feature",
+					prerequisiteValue: document.querySelector("#origin")?.primaryValue,
+					autoSelectExactPrerequisite: true,
+				});
+			};
+			
+			globalThis.fn_ability_class = (el) => {
+				globalThis.fn_feature_generic(el, {
+					type: "Class Ability",
+					prerequisiteValue: document.querySelector("#class")?.primaryValue,
+					requiredLevel: true
+				});
+			};
+			
+			globalThis.fn_feature_specialization = (el) => {
+				globalThis.fn_feature_generic(el, {
+					type: "Specialization Ability",
+					prerequisiteValue: document.querySelector("#specialization")?.primaryValue,
+					requiredLevel: true
+				});
+			};
+			
+			globalThis.fn_feature_quality = (el) => {
+				globalThis.fn_feature_generic(el, {
+					type: "Rare Quality",
+					requiredLevel: true
+				});
+			};
+			/*****************************************************************************/
+			
+			
+			globalThis.fn_suggest_nature = (el) => {
+				el.setSuggestions(Object.keys(natures_lookup));
+				const color = document.querySelector("#color").primaryValue;
+			
+				let nature = ""
+				if (color && !document.querySelector("#color").inputs[0]._autoFilled) {
+					nature = Object.keys(natures_lookup).find(key => natures_lookup[key].toLowerCase() === color.toLowerCase()) || ""
+				}
+			
+				if (!nature) {
+					el._setValue(0, nature, false)
+				} else {
+					el.primaryValue = nature
+				}
+			};
+			
+			
+			
+			globalThis.fn_suggest_color = (el) => {
+				el.setSuggestions(Object.values(natures_lookup));
+				const nature = document.querySelector("#nature").primaryValue;
+			
+				let color = ""
+				if (nature && !document.querySelector("#nature").inputs[0]._autoFilled) {
+					color = natures_lookup[Object.keys(natures_lookup).find(key => key.toLowerCase() === nature.toLowerCase())] || ""
+				}
+				el.primaryValue = color
+			};
+			
+			
+			// Converts a primary stat value into its derived modifier.
+			// If no value is present, clears the secondary field.
+			// Uses the stat_to_modifier_formula rule to map raw stats → gameplay modifier.
+			globalThis.fn_modifier = (el) => {
+				const value = el.primaryValue;
+				el.secondaryValue = Number(value) ? "+"+stat_to_modifier_formula(value) : "";
+			};
+			
+			// Converts the HP stat value into its derived modifier, which is slightly different from the regular modifier.
+			globalThis.fn_modifier_hp = (el) => {
+				//Compute value from class and level
+			
+				const poke_class_raw = document.querySelector("#class").primaryValue.toLowerCase();
+				const poke_level_raw = document.querySelector("#level").primaryValue;
+			
+				const poke_class = classes_lookup[poke_class_raw]
+				const poke_level = Number(poke_level_raw)
+			
+			
+				let max_hp
+			
+				if (poke_level && poke_class) {
+					max_hp = max_hp_formula(poke_level, poke_class)
+				}
+			
+			
+				el.primaryValue = max_hp || "";
+			
+				el.secondaryValue = Number(el.primaryValue) ? "+"+stat_to_modifier_hp_formula(el.primaryValue) : "";
+			};
+			
+			
+			globalThis.fn_max_adventure_tokens = (el) => {
+				//Compute value from level
+				const poke_level = parseInt(document.querySelector("#level").primaryValue, 10);
+			
+				let max_tokens
+			
+				if (!Number.isNaN(poke_level)) {
+					max_tokens = max_adventure_token_formula(poke_level)
+				}
+			
+				el.primaryValue = max_tokens || "";
+			};
+			
+			
+			// Maps a proficiency level (secondary value) to its corresponding dice expression.
+			// Values: "-" → "1d6", "m" → "2d6", "M" → "3d6".
+			// If the input is invalid or empty, clears the primary field.
+			globalThis.fn_proficiency = (el) => {
+				const prof = el.proficiency;
+				el.primaryValue = proficiency_lookup[prof]?.dice || "";
+			};
+			
+			// Determines a Pokémon's type (type1 or type2) based on the selected species.
+			// The element's id ("type1" or "type2") decides which type index to use.
+			globalThis.fn_compute_type = (el) => {
+				const p = get_selected_pokemon();
+			
+				// Map element id to the correct type slot
+				const index = {
+					type1: 0,
+					type2: 1
+				} [el.id];
+			
+				// Safely assign type if available
+				el.primaryValue = capitalizeWords(p?.types?.[index] || "");
+				};
+			
+			// Retrieves and fills in the Pokémon's height (in meters) from the selected species.
+			// If no Pokémon is selected, clears the field.
+			globalThis.fn_compute_height = (el) => {
+				const p = get_selected_pokemon();
+				el.primaryValue = p?.heightm || "";
+			};
+			
+			
+			globalThis.fn_battle_movement = (el) => {
+				const modifier = document.querySelector("#spe").secondaryValue;
+				const proficiency = document.querySelector("#movement_skill").secondaryValue;
+			
+				const proficiency_bonus = proficiency_lookup[proficiency]?.movement_bonus || 0;
+			
+				el.primaryValue =
+					modifier && speed_modifier_to_battle_formula(modifier, proficiency_bonus) || "";
+			};
+			
+			
+			globalThis.fn_compute_visible_tiles = (el) => {
+				globalThis.fn_proficiency(el)
+				const modifier = Number(document.querySelector("#spatk").secondaryValue);
+				const proficiency = document.querySelector("#awareness").secondaryValue;
+				
+				
+			const visibility = Object.keys(awareness_to_visible_tiles_lookup)
+			  .reduce((v, k) => modifier >= k ? awareness_to_visible_tiles_lookup[k] : v, null);
+			
+				const proficiency_bonus = proficiency_lookup[proficiency]?.visibility_tiles_bonus || 0;
+			
+			
+			
+				const vision_modifier = modifier && (visibility + proficiency_bonus) || "";
+				
+				
+				el.vision_value = vision_modifier
+			};
+			
+			
+			// Determines the size category of a Pokémon based on its height.
+			// Converts height from meters → feet, then finds the matching size bracket
+			// from sizes_lookup (which defines thresholds and labels).
+			globalThis.fn_compute_size = (el) => {
+				const height_m = document.querySelector("#height").primaryValue;
+			
+				// If no height is available, clear the field
+				if (!Number(height_m)) {
+					el.primaryValue = "";
+					return;
+				}
+			
+				// Convert meters to feet
+				const height_f = height_m * 3.28084;
+			
+				// Find the first size rule where height is below the threshold
+				const size =
+					Object.entries(sizes_lookup)
+					.map(([k, v]) => [Number(k), v]) // ensure numeric comparison
+					.sort((a, b) => a[0] - b[0]) // enforce ascending order
+					.find(([k]) => height_f < k)?.[1] // find matching bracket
+					||
+					Object.values(sizes_lookup).at(-1); // fallback to largest size
+			
+				// Assign the size label (e.g., "Small", "Medium")
+				el.primaryValue = capitalizeWords(size.label);
+			};
+			
+			
+			// Computes the full type effectiveness table based on the currently selected types.
+			// It gathers all type inputs (type1, type2, etc.), combines their effectiveness,
+			// and renders the resulting multipliers as a table.
+			//
+			// Logic:
+			// - Each selected type contributes a multiplier against every target type
+			// - Multipliers are combined multiplicatively (e.g., 2× * 0.5× = 1×)
+			// - If no type provides data for a target, the result is left blank
+			globalThis.fn_type_relation = el => {
+			
+				if (!type_effect_lookup) return;
+			
+				// Collect effectiveness maps for all selected types
+				const lists = [...document.querySelectorAll('[id^="type"]')]
+					.map(e => type_effect_lookup[(e.primaryValue || "").toLowerCase()] || {});
+			
+				// Get all possible target types (from the first entry in the lookup)
+				const keys = Object.keys(Object.values(type_effect_lookup)[0]);
+			
+				// Build combined effectiveness table
+				const result = Object.fromEntries(
+					keys.map(k => {
+						// Check if any selected type defines a value for this target type
+						const hasValue = lists.some(l => k in l);
+			
+						// Multiply all available modifiers, defaulting to 1 if missing
+						return [
+							k,
+							hasValue ?
+							lists.reduce((a, l) => a * (l[k] ?? 1), 1) :
+							""
+						];
+					})
+				);
+			
+				for (const r in result) {
+					if (result[r])
+						result[r] = type_multiplier_strings[result[r]][0]
+			
+				}
+				// Render the computed table in the UI
+				el.renderTable(result);
+			};
+			
+			
+			document.fonts.ready.then(() => {
+				document.body.style.visibility = "visible";
+			});
+			
+			
+			function get_selected_pokemon() {
+				let species_name = document.querySelector("#species").primaryValue;
+				let selectedPoke = Object.values(pokemon_list || {}).find((p) => p.name.toLowerCase() == species_name.toLowerCase()) || null;
+			
+				return selectedPoke;
+			}
+			
+			/*****************************************************************************/
+			const root = document.documentElement;
+			Object.entries(type_colors).forEach(([type, color]) => {
+				root.style.setProperty(`--type-${type}`, color);
+			});
+			let previousTheme = root.getAttribute("data-theme");
+			
+			window.addEventListener("beforeprint", () => {
+				previousTheme = root.getAttribute("data-theme");
+				root.setAttribute("data-theme", "paper");
+			});
+			
+			window.addEventListener("afterprint", () => {
+				if (previousTheme) {
+					root.setAttribute("data-theme", previousTheme);
+				} else {
+					root.removeAttribute("data-theme");
+				}
+			});
+			
+			 const theme_select = document.getElementById("theme-select");
+			getThemes()
+			
+			function getThemes() {
+				const themes = new Set();
+				for (const sheet of document.styleSheets) {
+					try {
+						for (const rule of sheet.cssRules) {
+							const match = rule.selectorText?.match(/:root\[data-theme=["'](.*?)["']\]/);
+							if (match) themes.add(match[1]);
+						}
+					} catch (e) {}
+				}
+				
+				
+				 
+				theme_select.innerHTML = "";
+			    themes.forEach(theme => {
+			      const opt = document.createElement("option");
+			      opt.value = theme;
+			      opt.textContent = theme;
+			      theme_select.appendChild(opt);
+			    });
+			
+				
+				return Array.from(themes);
+			}
+			
+			    theme_select.addEventListener("change", () => {
+			      applyTheme(theme_select.value);
+			    });
+			
+			
+			  const THEME_STORAGE_KEY = "selected-theme";
+			  function applyTheme(theme, save = true) {
+			    const themes = getThemes();
+			
+			    if (!themes.includes(theme) && theme !== "") {
+			      console.warn(
+			        `Invalid theme "${theme}". Available: ${themes.join(", ")}`
+			      );
+			      return;
+			    }
+			
+			    if (theme) {
+			      root.setAttribute("data-theme", theme);
+			    } else {
+			      root.removeAttribute("data-theme");
+			    }
+			
+			    theme_select.value = theme;
+			
+			    if (save) {
+			      localStorage.setItem(THEME_STORAGE_KEY, theme);
+			    }
+			
+			    console.info(`Theme set to "${theme}"`);
+			  }
+			
+			window.applyTheme = applyTheme;
+			loadTheme()
+			  function loadTheme() {
+			    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+			
+			    if (saved) {
+			      applyTheme(saved, false);
+			    } else {
+			      const current = root.getAttribute("data-theme") || "";
+			      if (theme_select) theme_select.value = current;
+			    }
+			  }
+			
+			
+			
+			const updatePageTitle = (() => {
+			    const originalTitle = document.title; // store original safely
+			    return (prefix) => {
+			        document.title = prefix ? `${prefix} - ${originalTitle}` : originalTitle;
+			    };
+			})();
+			
+			
+			
+			
+			
+			function verifyTypeConsistency() {
+				const colorTypes = new Set(Object.keys(type_colors));
+				const effectTypes = new Set(Object.keys(type_effect_lookup));
+				const pokedexTypes = new Set(
+					Object.values(pokemon_list)
+					.flatMap(p => p.types || [])
+					.map(t => t?.toLowerCase())
+					.filter(Boolean)
+				);
+			
+				const allTypes = new Set([...colorTypes, ...effectTypes, ...pokedexTypes]);
+			
+				const missing = src => [...allTypes].filter(t => !src.has(t));
+			
+				const missingInColors = missing(colorTypes);
+				const missingInEffects = missing(effectTypes);
+				const missingInPokedex = missing(pokedexTypes);
+			
+				console.info(
+					"Missing in type_colors:", missingInColors,
+					"\nMissing in type_effect_lookup:", missingInEffects,
+					"\nMissing in pokedex:", missingInPokedex
+				);
+			
+				// VALID types = only those present in ALL sources
+				const validTypes = [...allTypes].filter(
+					t => colorTypes.has(t) && effectTypes.has(t) && pokedexTypes.has(t)
+				);
+			
+				const validSet = new Set(validTypes);
+			
+				// --- CLEAN type_colors ---
+				for (const k in type_colors)
+					if (!validSet.has(k)) delete type_colors[k];
+			
+			
+				// --- CLEAN type_effect_lookup ---
+				for (const k in type_effect_lookup) {
+					if (!validSet.has(k)) delete type_effect_lookup[k];
+					else {
+						for (const k2 in type_effect_lookup[k])
+							if (!validSet.has(k2)) delete type_effect_lookup[k][k2];
+					}
+				}
+			
+				// --- CLEAN pokemon_list types ---
+				for (const p of Object.values(pokemon_list)) {
+					if (!p.types) continue;
+					p.types = p.types.map(t => t?.toLowerCase()).filter(t => validSet.has(t));
+				}
+			
+				console.info("Final valid types:", Object.keys(type_effect_lookup));
+			}
+			
+			function updateGlobalStatus() {
+				document.querySelectorAll("labeled-input").forEach((el) => el.update());
+			
+				saveToURL();
+			}
+			
+			
+			/***************INPUT FUNCTIONS*************************/
+			
+			function capitalizeWords(str) {
+				if (!str) return str;
+				return str
+					.toLowerCase()
+					.split(" ")
+					.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+					.join(" ");
+			}
+			
+			const normalizeValue = (v) => {
+				if (v == null) return v;
+			
+			
+				// Remove invisible / zero-width / control characters
+				// \u200B = zero-width space
+				// \u200C = zero-width non-joiner
+				// \u200D = zero-width joiner
+				// \uFEFF = BOM / zero-width no-break space
+				// \u2060 = word joiner
+				// \u2061-\u2064 = other formatting chars
+				v = v.replace(/[\u200B-\u200D\uFEFF\u2060-\u2064]/g, "").trim();
+			
+				if (v === "") return v;
+			
+			
+				// Check if it's a valid number (and not just whitespace)
+				if (!isNaN(v)) {
+					return Number(v);
+				}
+			
+				return v; // keep as string
+			};
+			
+			
+			function clamp(number, lower, upper) {
+				return Math.min(Math.max(number, lower), upper);
+			}
+			
+			const arraysEqual = (a, b) => {
+				if (a === b) return true; // same reference (fast path)
+				if (a == null || b == null) return false;
+				if (a.length !== b.length) return false; // quick fail
+			
+				for (let i = 0; i < a.length; i++) {
+					if (a[i] !== b[i]) return false; // early exit
+				}
+				return true;
+			};
+			
+			
+			/*****************************************************************************/
+			
+			const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+			const HASH_LENGTH = 3;
+			
+			function hashId(str) {
+				let hash = 0;
+			
+				for (let i = 0; i < str.length; i++) {
+					hash = (hash * 31 + str.charCodeAt(i)) >>> 0; // 32-bit integer
+				}
+			
+				let out = "";
+				for (let i = 0; i < HASH_LENGTH; i++) {
+					out = CHARS[hash % 64] + out;
+					hash = Math.floor(hash / 64);
+				}
+			
+				return out;
+			}
+			
+			
+			function buildIdMap() {
+				const idToHash = {};
+				const used = new Set();
+			
+				document.querySelectorAll("labeled-input").forEach(el => {
+					let hash = "";
+					do {
+						hash = hashId(el.id + hash);
+					} while (used.has(hash));
+					used.add(hash);
+					idToHash[el.id] = hash;
+				});
+			
+				return idToHash;
+			}
+			
+			
+			const encoding_separators = ["§", "¶"]
+			
+			
+			// --- Build a stable emoji set (1024 single-codepoint emojis) ---
+			function generateEmojiSet() {
+				const emojis = [];
+			
+				// Ranges with mostly single-codepoint emojis
+				const ranges = [
+					[0x1F300, 0x1F5FF], // symbols & pictographs
+					[0x1F600, 0x1F64F], // emoticons
+					[0x1F680, 0x1F6FF], // transport & map
+					[0x1F700, 0x1F77F], // alchemical
+					[0x1F780, 0x1F7FF], // geometric extended
+					[0x1F800, 0x1F8FF],
+					[0x1F900, 0x1F9FF], // supplemental symbols
+					[0x1FA00, 0x1FAFF], // extended-A
+				];
+			
+				for (const [start, end] of ranges) {
+					for (let cp = start; cp <= end; cp++) {
+						const char = String.fromCodePoint(cp);
+			
+						// Filter out problematic ones (very basic filter)
+						if (!/\uFE0F/.test(char)) {
+							emojis.push(char);
+							if (emojis.length === 1024) return emojis;
+						}
+					}
+				}
+			
+				if (emojis.length < 1024) {
+					throw new Error("Not enough emojis collected");
+				}
+			
+				return emojis;
+			}
+			
+			const EMOJI_SET = generateEmojiSet();
+			
+			// Build reverse lookup
+			const EMOJI_MAP = new Map();
+			EMOJI_SET.forEach((e, i) => EMOJI_MAP.set(e, i));
+			
+			
+			// --- ENCODE: Uint8Array → emoji string ---
+			function encodeEmoji(bytes) {
+				let buffer = 0;
+				let bits = 0;
+				let output = "";
+			
+				for (let i = 0; i < bytes.length; i++) {
+					buffer = (buffer << 8) | bytes[i];
+					bits += 8;
+			
+					while (bits >= 10) {
+						bits -= 10;
+						const index = (buffer >> bits) & 0x3FF; // 1023
+						output += EMOJI_SET[index];
+					}
+				}
+			
+				// Remaining bits
+				if (bits > 0) {
+					const index = (buffer << (10 - bits)) & 0x3FF;
+					output += EMOJI_SET[index];
+				}
+			
+				return output;
+			}
+			
+			
+			// --- DECODE: emoji string → Uint8Array ---
+			function decodeEmoji(str) {
+				const chars = Array.from(decodeURIComponent(str));
+			
+				let buffer = 0;
+				let bits = 0;
+				const bytes = [];
+			
+				for (let ch of chars) {
+					const value = EMOJI_MAP.get(ch);
+					if (value === undefined) {
+						throw new Error("Invalid emoji in input");
+					}
+			
+					buffer = (buffer << 10) | value;
+					bits += 10;
+			
+					while (bits >= 8) {
+						bits -= 8;
+						const byte = (buffer >> bits) & 0xFF;
+						bytes.push(byte);
+					}
+				}
+			
+				return new Uint8Array(bytes);
+			}
+			
+			
+			// ===============================
+			// Encoding Methods Registry
+			// ===============================
+			
+			const encodingMethods = {
+				custom_raw: {
+					encode(nodeList) {
+			
+						const [entrySep, valueSep] = encoding_separators
+			
+						const escape = s =>
+							String(s).replace(new RegExp(`[\\\\${entrySep}${valueSep}]`, "g"), "\\$&");
+			
+						return Object.entries(nodeList)
+							.map(([k, v]) =>
+								k + valueSep + (Array.isArray(v) ? v.map(escape).join(valueSep) : escape(v))
+							)
+							.join(entrySep);
+			
+			
+					},
+					decode(str) {
+						const [entrySep, valueSep] = encoding_separators
+			
+			
+						if (!str) return {};
+			
+						const unescape = s => s.replace(/\\(.)/g, "$1");
+			
+						const splitSafe = (input, sep) => {
+							const out = [];
+							let cur = "",
+								esc = false;
+			
+							for (const ch of input) {
+								if (esc) {
+									cur += "\\" + ch; // preserve escape sequence
+									esc = false;
+								} else if (ch === "\\") {
+									esc = true;
+								} else if (ch === sep) {
+									out.push(cur);
+									cur = "";
+								} else {
+									cur += ch;
+								}
+							}
+							out.push(cur);
+							return out;
+						};
+			
+						const toVal = v =>
+							v !== "" && !isNaN(v) ? Number(v) : v;
+			
+						return Object.fromEntries(
+							splitSafe(str, entrySep)
+							.filter(Boolean)
+							.map(entry => {
+								const parts = splitSafe(entry, valueSep).map(unescape);
+								if (parts.length < 2) return [];
+			
+								const [k, ...vals] = parts;
+			
+			
+								return [k, vals.length === 1 ? toVal(vals[0]) : vals.map(toVal)];
+							})
+							.filter(e => e.length)
+						);
+			
+					}
+				},
+				custom_raw_fixed: {
+					encode(nodeList) {
+						const [entrySep, valueSep] = encoding_separators
+			
+						const escape = s =>
+							String(s).replace(new RegExp(`[\\\\${entrySep}${valueSep}]`, "g"), "\\$&");
+			
+			
+						return Object.entries(nodeList)
+							.map(([k, v]) =>
+								k + (
+									Array.isArray(v) ? v.map(escape).join(valueSep) : escape(v)
+								)
+							)
+							.join(entrySep);
+					},
+					decode(str) {
+						const [entrySep, valueSep] = encoding_separators
+			
+						if (!str) return {};
+			
+						const unescape = s => s.replace(/\\(.)/g, "$1");
+			
+						const splitSafe = (input, sep) => {
+							const out = [];
+							let cur = "",
+								esc = false;
+			
+							for (const ch of input) {
+								if (esc) {
+									cur += "\\" + ch; // preserve escape sequence
+									esc = false;
+								} else if (ch === "\\") {
+									esc = true;
+								} else if (ch === sep) {
+									out.push(cur);
+									cur = "";
+								} else {
+									cur += ch;
+								}
+							}
+							out.push(cur);
+							return out;
+						};
+						const toVal = v =>
+							v !== "" && !isNaN(v) ? Number(v) : v;
+			
+						return Object.fromEntries(
+							splitSafe(str, entrySep)
+							.filter(Boolean)
+							.map(entry => {
+								const k = entry.slice(0, HASH_LENGTH);
+								const rest = entry.slice(HASH_LENGTH);
+			
+								if (!rest) return [k, ""];
+			
+								const parts = splitSafe(rest, valueSep).map(unescape);
+								const values = parts.map(toVal);
+			
+								return [k, values.length === 1 ? values[0] : values];
+							})
+						);
+			
+					}
+				},
+			
+				custom_fflate: {
+					encode(nodeList) {
+			
+						const encoded = encodingMethods.custom_raw.encode(nodeList);
+			
+						const inputBytes = fflate.strToU8(encoded);
+						const compressed = fflate.deflateSync(inputBytes);
+			
+						let base64 = btoa(String.fromCharCode(...compressed));
+						return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+			
+					},
+			
+					decode(raw) {
+			
+			
+						let padded = raw + "=".repeat((4 - (raw.length % 4)) % 4);
+			
+						// Convert back to standard Base64
+						padded = padded.replace(/-/g, "+").replace(/_/g, "/");
+						const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+			
+						const decompressed = fflate.decompressSync(bytes);
+						const encoded = fflate.strFromU8(decompressed);
+			
+			
+						return encodingMethods.custom_raw.decode(encoded);
+			
+					}
+				},
+				custom_fixed_fflate: {
+					encode(nodeList) {
+			
+						const encoded = encodingMethods.custom_raw_fixed.encode(nodeList);
+						const inputBytes = fflate.strToU8(encoded);
+						const compressed = fflate.deflateSync(inputBytes);
+						let base64 = btoa(String.fromCharCode(...compressed));
+						return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+			
+					},
+			
+					decode(raw) {
+			
+			
+						let padded = raw + "=".repeat((4 - (raw.length % 4)) % 4);
+			
+						// Convert back to standard Base64
+						padded = padded.replace(/-/g, "+").replace(/_/g, "/");
+			
+			
+						const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+			
+						const decompressed = fflate.decompressSync(bytes);
+						const encoded = fflate.strFromU8(decompressed);
+			
+			
+						return encodingMethods.custom_raw_fixed.decode(encoded);
+			
+					}
+				},
+			
+				custom_fixed_fflate_emoji: {
+					encode(nodeList) {
+			
+						const encoded = encodingMethods.custom_raw_fixed.encode(nodeList);
+			
+						const inputBytes = fflate.strToU8(encoded);
+						const compressed = fflate.deflateSync(inputBytes);
+						let base64 = btoa(String.fromCharCode(...compressed));
+						return encodeEmoji(compressed)
+			
+					},
+			
+					decode(raw) {
+						const bytes = decodeEmoji(raw);
+			
+						const decompressed = fflate.decompressSync(bytes);
+						const encoded = fflate.strFromU8(decompressed);
+			
+			
+						return encodingMethods.custom_raw_fixed.decode(encoded);
+			
+					}
+				},
+			
+			
+				json_base64: {
+					encode(nodeList) {
+						const json = JSON.stringify(nodeList);
+			
+						// encode to base64 + make URL-safe
+						return btoa(json)
+							.replace(/\+/g, "-")
+							.replace(/\//g, "_")
+							.replace(/=+$/, "");
+					},
+			
+					decode(raw) {
+						// restore padding
+						let padded = raw + "=".repeat((4 - (raw.length % 4)) % 4);
+			
+						// convert URL-safe back to standard base64
+						padded = padded.replace(/-/g, "+").replace(/_/g, "/");
+			
+						// decode base64 → JSON string
+						const json = atob(padded);
+			
+						// parse JSON
+						return JSON.parse(json);
+					}
+				},
+			
+				json_fflate: {
+					encode(nodeList) {
+						const idToHash = buildIdMap();
+			
+			
+						const json = JSON.stringify(nodeList);
+			
+						const inputBytes = fflate.strToU8(json);
+						const compressed = fflate.deflateSync(inputBytes);
+			
+						let base64 = btoa(String.fromCharCode(...compressed));
+						return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+					},
+			
+					decode(raw) {
+			
+						let padded = raw + "=".repeat((4 - (raw.length % 4)) % 4);
+			
+						// Convert back to standard Base64
+						padded = padded.replace(/-/g, "+").replace(/_/g, "/");
+			
+			
+						const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+			
+						const decompressed = fflate.decompressSync(bytes);
+						const json = fflate.strFromU8(decompressed);
+			
+			
+						return JSON.parse(json);
+					}
+				},
+			};
+			
+			function cleanednodeList(nodeList) {
+				const idToHash = buildIdMap();
+				const data = {};
+			
+				nodeList.forEach(el => {
+					// Map all inputs to normalized values, skipping auto-filled
+					const values = el.inputs.map((input, i) => {
+						if (!input || input._autoFilled) return "";
+						return normalizeValue(input.value, i > 0 ? input : undefined);
+					});
+			
+					// Trim trailing empty values
+					let lastNonEmpty = -1;
+					for (let i = values.length - 1; i >= 0; i--) {
+						if (values[i] !== "") {
+							lastNonEmpty = i;
+							break;
+						}
+					}
+					if (lastNonEmpty === -1) return; // all empty, skip
+			
+					const trimmedValues = values.slice(0, lastNonEmpty + 1);
+			
+					const key = idToHash[el.id];
+					data[key] = trimmedValues.length > 1 ? trimmedValues : trimmedValues[0];
+				});
+			
+				return data;
+			}
+			
+			
+			// ===============================
+			// Active Method Selector
+			// ===============================
+			
+			let activeEncodingMethod = "custom_fixed_fflate";
+			
+			
+			// ===============================
+			// Test Function
+			// ===============================
+			
+			function testEncodingMethods(nodeList) {
+				const idToHash = buildIdMap();
+				const results = [];
+			
+				for (const [name, method] of Object.entries(encodingMethods)) {
+					try {
+						const encoded = method.encode(nodeList);
+						const decoded = method.decode(encoded);
+			
+						const matches = JSON.stringify(decoded) === JSON.stringify(nodeList);
+			
+						results.push({
+							method: name,
+							size: encoded.length,
+							valid: matches,
+							decoded: decoded,
+							encoded: ((encoded || "").slice(0, 50).match(/.{1,80}/g)?.join("\n")) || "",
+						});
+			
+					} catch (err) {
+						results.push({
+							method: name,
+							size: 0,
+							valid: false,
+							error: err.message
+						});
+					}
+				}
+				console.table(results);
+			}
+			
+			
+			
+			
+			// ===============================
+			// Save
+			// ===============================
+			function clearURL() {
+			    location.hash = "";
+			}
+			
+			function saveToURL() {
+				clearTimeout(saveToURL._t);
+			
+				saveToURL._t = setTimeout(() => {
+					let nodeList = document.querySelectorAll("labeled-input");
+					nodeList = cleanednodeList(nodeList)
+			
+			
+					const method = encodingMethods[activeEncodingMethod];
+					if (!method) {
+						console.error("Invalid encoding method:", activeEncodingMethod);
+						return;
+					}
+			
+					const encoded = method.encode(nodeList);
+					const current = location.hash.slice(1);
+					if (encoded === current) return;
+			
+					if (true)
+						testEncodingMethods(nodeList);
+			
+					//location.hash = encoded;
+					history.replaceState(null, "", "#" + encoded);
+			
+					const char_name = capitalizeWords(document.querySelector("#character_name").primaryValue.toLowerCase()) ;
+					updatePageTitle(char_name)
+					
+					console.info("Saved using:", activeEncodingMethod);
+			
+				}, 300);
+			}
+			
+			
+			// ===============================
+			// Load
+			// ===============================
+			
+			function loadFromURL() {
+				const raw = location.hash.slice(1);
+				if (!raw) return;
+			
+				const method = encodingMethods[activeEncodingMethod];
+				if (!method) {
+					console.error("Invalid encoding method:", activeEncodingMethod);
+					return;
+				}
+			
+				let data;
+				try {
+					data = method.decode(raw);
+				} catch (err) {
+					console.warn("Failed to decode:", err);
+					return;
+				}
+			
+				const idToHash = buildIdMap();
+				const hashToId = Object.fromEntries(
+					Object.entries(idToHash).map(([id, hash]) => [hash, id])
+				);
+			
+				console.info("Starting to restore pokemon data:", data)
+			
+			
+				Object.entries(data).forEach(([id, values]) => {
+					const originalId = hashToId[id];
+					if (!originalId) return;
+			
+					const el = document.getElementById(originalId);
+					if (!el) return;
+			
+			try{
+			
+					// Single value
+					if (!Array.isArray(values)) {
+				
+						el._setValue(0, values, false);
+			
+						return;
+					}
+			
+					// Array of values: fill only up to last non-empty
+					let lastNonEmpty = -1;
+					for (let i = values.length - 1; i >= 0; i--) {
+						if (values[i] !== "") {
+							lastNonEmpty = i;
+							break;
+						}
+					}
+			
+					for (let i = 0; i <= lastNonEmpty; i++) {
+			
+						if (values[i] !== undefined) el._setValue(i, values[i], false);
+			
+					}
+					
+					
+											} catch (error) {
+			  console.warn(error);
+			  }
+				});
+			
+					const char_name = capitalizeWords(document.querySelector("#character_name").primaryValue.toLowerCase()) ;
+					updatePageTitle(char_name)
+			
+				console.info("Loaded URL data using:", activeEncodingMethod);
+				console.info("Restored Pokemon Data:", data)
+			}
+			
+			
+			window.clearURLAndReload = function () {
+				if (!confirm("Are you sure you want to clear the sheet? You can recover lost data from your browser history")) {
+					return;
+				}
+			
+				history.pushState(null, "", location.href);
+				clearURL();
+				location.reload();
+			};
+			
+			
+			
+			/*****************************************************************************/
+			
+			function computeAutoMath(raw) {
+				if (typeof raw !== "string") {
+					return { eligible: false, result: null };
+				}
+			
+				const value = raw.trim();
+			
+				// must only contain safe characters
+				const isValidMath = /^[0-9+\-().\s]+$/.test(value);
+			
+				// must contain at least one real operation between numbers
+				const hasRealOperation = /[0-9]\s*[+\-]\s*[0-9]/.test(value);
+			
+				if (!isValidMath || !hasRealOperation) {
+					return { eligible: false, result: null };
+				}
+			
+				try {
+					const result = Function(`"use strict"; return (${value})`)();
+			
+					if (typeof result === "number" && isFinite(result)) {
+						return { eligible: true, result };
+					}
+				} catch (e) {
+					// ignore invalid expressions
+				}
+			
+				return { eligible: false, result: null };
+			}
+			
+			
+			
+			
+			class LabeledInput extends HTMLElement {
+				static counter = 0;
+			
+				constructor() {
+					super();
+			
+					this.wrapper = document.createElement("div");
+					this.label = document.createElement("label");
+					this.datalist = document.createElement("datalist");
+			
+					this.inputs = [];
+			
+			
+					this._onUpdateFN = () => {};
+					const fn = globalThis[this.getAttribute("updatefn")];
+			
+					if (typeof fn === "function") {
+						this._onUpdateFN = fn;
+					}
+			
+			
+					//this.inputs[0].classList.add("primary");
+			
+					let type = this.getAttribute("type") || "text";
+					const labelText = this.getAttribute("label") || "";
+			
+					if (!this.id) {
+						let id;
+			
+						if (labelText.trim()) {
+							id = labelText
+								.toLowerCase()
+								.replace(/\s+/g, "_") // spaces → underscores
+								.replace(/[^a-z0-9_]/g, ""); // remove invalid chars
+						} else {
+							id = `input_${LabeledInput.counter++}`;
+						}
+			
+						// ensure uniqueness (important!)
+						let uniqueId = id;
+						let i = 1;
+						while (document.getElementById(uniqueId)) {
+							uniqueId = `${id}_${i++}`;
+						}
+			
+						this.id = uniqueId;
+					}
+			
+					this.appendChild(this.label);
+			
+			
+					this.label.textContent = labelText;
+					this.appendChild(this.wrapper);
+			
+			
+					this.datalist.id = `${this.id}_list`;
+					this.setSuggestions(this.suggestions || []);
+					this.appendChild(this.datalist);
+			
+			
+					/***************** Create Input Layout *****************/
+			
+					/***************** Input Layout *****************/
+			
+			
+					this._createInput();
+			
+					if (type.includes("type_relationship")) {
+					
+						this._removeInput(0);
+					
+						this.classList.add("type_relationship");
+						this.table = document.createElement("table");
+						this.table.style.width = "100%";
+						this.table.style.borderCollapse = "collapse";
+						this.table.classList.add("type-table");
+			
+						this.wrapper.appendChild(this.table);
+			
+					} 
+			
+			
+					if (type.includes("checkbox")) {
+								this._removeInput(0);
+			
+					
+						this.classList.add("checkbox-list");
+			
+						const count = 5
+			
+						for (let i = 0; i < count; i++) {
+							const cb = this._createInput("input");
+							cb.type = "checkbox";
+							cb.dataset.index = i;
+							cb.value = ""
+			
+							cb.addEventListener("change", (e) => {
+								this._handleCheckboxLogic(i, cb.checked);
+							});
+			
+						}
+					} 
+			
+			
+					if (type.includes("modifier-box")) {
+						this.classList.add("modifier-box");
+			
+						this._createInput();
+						
+						this.inputs[0].customType = "number"
+						this.inputs[1].customType = "number"
+						
+					} 
+			
+			
+					if (type.includes("info-box")) {
+						this.classList.add("info-box");
+			
+						this._createInput("textarea");
+						this.appendChild(this.inputs[1]);
+					} 
+			
+					if (type.includes("move-info")) {
+						this._removeInput(0);
+			
+						
+						this.wrapper.appendChild(this.label);
+						this.classList.add("move-box");
+			
+						this._createInput("", "move_name");
+						const pp_used = this._createInput("", "move_pp_used");
+			
+						this._createInput("", "move_level");
+						const move_type = this._createInput("", "move_type");
+						this._createInput("", "move_category");
+						this._createInput("", "move_power");
+						this._createInput("", "move_target");
+						this._createInput("", "move_condition");
+						this._createInput("", "move_pp");
+						this._createInput("textarea", "move_effect");
+						
+						pp_used.customType = "number"
+						move_type.classList.add("pkm-type-name")
+			
+						const labelPP = document.createElement("label");
+						const labelUsed = document.createElement("label");
+						const labelPwr = document.createElement("label");
+						labelPwr.id = "pwr";
+						labelPwr.textContent = "pwr";
+						labelPP.id = "PP";
+						labelPP.textContent = "PP";
+						labelUsed.id = "Used";
+						labelUsed.textContent = "Used";
+						this.wrapper.appendChild(labelPP);
+						this.wrapper.appendChild(labelUsed);
+						this.wrapper.appendChild(labelPwr);
+			
+					} 
+			
+			
+					if (type.includes("proficient")) {
+						this.classList.add("proficient");
+			
+						const proficiency_box = this._createInput("", "proficiency");
+			
+			
+						// Restrict input2 to "-", "m", "M" and only 1 character
+						const allowed = Object.keys(proficiency_lookup);
+						proficiency_box.maxLength = 1; // enforce single character
+			
+						// optional: add a datalist for suggestions
+						const listId = `${this.id}_input2_list`;
+						const datalist = document.createElement("datalist");
+						datalist.id = listId;
+						allowed.forEach((val) => {
+							const option = document.createElement("option");
+							option.value = val;
+							datalist.appendChild(option);
+						});
+						proficiency_box.setAttribute("list", listId);
+						this.appendChild(datalist);
+					} 
+			
+					if (type.includes("vision-box")) {
+						this.classList.add("vision-box");
+						const vision_value = this._createInput("", "vision_value");
+						vision_value.customType = "number"
+						
+						}
+			
+			
+			
+					/***************** Input Content *****************/
+			
+					this.inputs[0]?.setAttribute("list", this.datalist.id);
+			
+			if (type.includes("number")) {
+				this.inputs[0].customType = "number" ;
+			}
+			  this.inputs.forEach(input => {
+			    // Use text so we can support expressions
+				if(input.customType == "number"){
+			    input.type = "text";
+			
+			    // Suggest a keyboard that shows numbers + math-friendly symbols
+				//input.inputMode = "decimal"; //On android, did not show a + symbol on the keyboard
+			    input.inputMode = "tel";
+			
+			    input.autocomplete = "off";
+			  }});
+			
+			
+					/***************** Input Shape *****************/
+			
+			
+					if (type.includes("square")) {
+						this.classList.add("square");
+					}
+			
+					if (type.includes("wide")) {
+						this.classList.add("wide");
+					}
+			
+					if (type.includes("tall")) {
+						this.classList.add("tall");
+					}
+			
+					if (type.includes("short")) {
+						this.classList.add("short");
+					}
+			
+					if (type.includes("image-box")) {
+						this.classList.add("image-box");
+					}
+					
+					if (type.includes("pkm-type-name")) {
+						this.inputs[0].classList.add("pkm-type-name");
+					}
+					
+					
+			
+					this._defineAccessors();
+			
+				}
+			
+			
+				_handleCheckboxLogic(index, isChecked) {
+					if (typeof index !== "number" || Number.isNaN(index)) return;
+			
+			
+					for (let i = 0; i < this.inputs.length; i++) {
+						this.inputs[i].checked = i < index || (i === index && (isChecked || this.inputs[i + 1]?.checked));
+					}
+			
+					if (!this.inputs[index].checked) {
+						index -= 1
+					}
+			
+					if (index < 0) index = ""
+			
+					this.inputs[0].value = index;
+					updateGlobalStatus();
+				}
+			
+			
+				_defineAccessors() {
+					// 1. Index-based accessors
+					this.inputs.forEach((_, index) => {
+						const name = index === 0 ?
+							"primaryValue" :
+							index === 1 ?
+							"secondaryValue" :
+							`value${index + 1}`;
+			
+						Object.defineProperty(this, name, {
+							get: () => this.inputs[index].value,
+							set: (val) => this._setValue(index, val, true),
+						});
+					});
+			
+					// 2. ID-based accessors 
+					this.inputs.forEach((input, index) => {
+						const id = input.id;
+			
+						if (!id) return; // skip inputs without id
+			
+						// avoid overwriting existing properties
+						if (this.hasOwnProperty(id)) return;
+			
+						Object.defineProperty(this, id, {
+							get: () => this.inputs[index].value,
+							set: (val) => this._setValue(index, val, true),
+						});
+					});
+				}
+			
+				_createInput(type, id) {
+					const input = document.createElement(type || "input");
+			
+					// Assign id only if provided
+					if (typeof id === "string" && id.length > 0) {
+						input.id = id;
+					}
+			
+					input._autoFilled = false;
+			
+					input._mathTimeout = null;
+			
+					this.inputs.push(input);
+			
+					const index = this.inputs.length - 1;
+			
+					input.classList.add("input" + index);
+			
+					input.addEventListener("input", () => {
+						input._autoFilled = false;
+						this._setValue(index, "", false);
+						updateGlobalStatus();
+					});
+			
+					this.wrapper.append(input);
+			
+					return input;
+				};
+			
+			_removeInput(index) {
+			  const input = this.inputs[index];
+			  if (!input) return;
+			
+			  // Remove from DOM
+			  input.remove();
+			
+			  // Remove from array
+			  this.inputs.splice(index, 1);
+			
+			  // Re-index remaining inputs so class names stay consistent
+			  this.inputs.forEach((inp, i) => {
+			    inp.classList.remove(...[...inp.classList].filter(c => c.startsWith("input")));
+			    inp.classList.add("input" + i);
+			  });
+			}
+			
+			_setValue(index, value, auto = true) {
+				const input = this.inputs[index];
+				if (!input) return;
+			
+				// Save computed font size from CSS (not inline)
+				const originalFontSize = window.getComputedStyle(input).fontSize;
+			
+			
+				// Helper function to adjust font size (textarea only)
+				const adjustFontSize = () => {
+					if (input.tagName.toLowerCase() !== "textarea") return;
+			
+					const maxHeight = input.offsetHeight;
+			
+					input.style.fontSize = "";
+			
+					let fontSize = parseInt(window.getComputedStyle(input).fontSize, 10);
+			
+					while (input.scrollHeight > maxHeight && fontSize > 8) {
+						fontSize -= 1;
+						input.style.fontSize = `${fontSize}px`;
+					}
+				};
+			
+				// Set value if auto-filled or empty
+				if (input._autoFilled || input.value === "") {
+					input.value = value;
+					input._autoFilled = auto;
+					input.scrollLeft = 0;
+				}
+				
+			
+			if (input.customType?.includes("number")) {
+				input.value = input.value.replace(/[^0-9+\-().\s]/g, "");
+			}
+				
+			
+				// =========================
+				// AUTOMATH ( + and - only )
+				// =========================
+				const math = computeAutoMath(input.value);
+					clearTimeout(input._mathTimeout);
+			
+				input.classList.remove("automath-ready");
+				
+				if (math.eligible) {
+					input.classList.add("automath-ready");
+					input._mathTimeout = setTimeout(() => {
+						const original = input.value;
+			
+						if (math.result !== null && math.result !== original) {
+							input.value = math.result;
+							input.classList.remove("automath-ready");
+							updateGlobalStatus();
+						}
+					}, 900);
+				}
+			
+			
+				input.toggleAttribute("auto-filled", input._autoFilled);
+			
+				adjustFontSize();
+			
+				if (input.type === "checkbox" && index === 0) {
+					this._handleCheckboxLogic(value, true);
+				}
+				
+				
+				if (input.classList.contains("pkm-type-name")){
+				input.style.setProperty('--type-color', `var(--type-${input.value.toLowerCase()})`);
+				}
+				
+				
+				
+			}
+			
+			
+				update() {
+					this._onUpdateFN(this);
+				}
+			
+			
+				setSuggestions(list) {
+					if (!Array.isArray(list)) return
+					if (arraysEqual(this.suggestions, list)) return;
+			
+					this.suggestions = list;
+			
+					if (!this.datalist) return;
+			
+					this.datalist.innerHTML = "";
+			
+					list.forEach((value) => {
+						const option = document.createElement("option");
+						option.value = value;
+						this.datalist.appendChild(option);
+					});
+				}
+			
+			
+				renderTable(data = {}) {
+					if (!this.table) return;
+			
+					this.table.innerHTML = "";
+			
+					Object.entries(data).forEach(([type, value]) => {
+						const row = document.createElement("tr");
+			
+						const td1 = document.createElement("td");
+						const td2 = document.createElement("td");
+			
+						td1.textContent = type;
+						td2.textContent = value;
+			
+			
+						td1.classList.add("type-name");
+						td1.classList.add("pkm-type-name")
+						td1.style.setProperty('--type-color', `var(--type-${type.toLowerCase()})`);
+			
+						row.appendChild(td1);
+						row.appendChild(td2);
+						this.table.appendChild(row);
+					});
+				}
+			
+			
+			}
+			
+			customElements.define("labeled-input", LabeledInput);
+			
+			/*****************************************************************************/
+			
+			/*****************************************************************************/
+			class ArrowConnector extends HTMLElement {
+				static get observedAttributes() {
+					return ["from", "to"];
+				}
+			
+				constructor() {
+					super();
+					this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+					this.appendChild(this.svg);
+				}
+			
+				connectedCallback() {
+					window.addEventListener("resize", () => this.update());
+					document.addEventListener("DOMContentLoaded", () => this.update());
+					document.fonts?.ready?.then(() => this.update());
+			
+			
+				}
+			
+				attributeChangedCallback() {
+					this.update();
+				}
+			
+				update() {
+					if (!this.svg) return;
+			
+			
+					// DOM not ready
+					if (document.readyState !== "interactive" &&
+						document.readyState !== "complete") return;
+			
+					// Fonts not ready
+					if (document.fonts && document.fonts.status !== "loaded") return;
+			
+					this.svg.replaceChildren();
+			
+					const fromSel = this.getAttribute("from");
+					const toSel = this.getAttribute("to");
+					if (!fromSel || !toSel || toSel === fromSel) return;
+			
+					const container = this.offsetParent || this.parentElement;
+					if (!container) return;
+			
+					const containerRect = container.getBoundingClientRect();
+			
+					const fromElRaw = container.querySelector(fromSel);
+					if (!fromElRaw) return;
+			
+					const toElementsRaw = toSel
+						.split(",")
+						.map(sel => container.querySelector(sel.trim()))
+						.filter(Boolean);
+			
+					if (!toElementsRaw.length) return;
+			
+			
+					const styles = getComputedStyle(this);
+			
+			
+					const padding = parseFloat(styles.getPropertyValue("--arrow-padding")) || 0;
+			
+			
+					const getCenterBottom = el => {
+						const r = el.getBoundingClientRect();
+						return {
+							x: r.left + r.width / 2 - containerRect.left,
+							y: r.bottom - containerRect.top + padding
+						};
+					};
+			
+					const getCenterTop = el => {
+						const r = el.getBoundingClientRect();
+						return {
+							x: r.left + r.width / 2 - containerRect.left,
+							y: r.top - containerRect.top - padding
+						};
+					};
+			
+					const start = getCenterBottom(fromElRaw);
+			
+					// Resolve targets
+					const targets = toElementsRaw.map(el => {
+						return {
+							el: el,
+							end: getCenterTop(el)
+						};
+					});
+			
+					// ---- CONFIG ----
+			
+					const shortThreshold = parseFloat(styles.getPropertyValue("--arrow-short-threshold")) || 100;
+					const midRatio = parseFloat(styles.getPropertyValue("--arrow-mid-ratio")) || 0.5;
+			
+					// ---- SHARED MID Y (for long arrows) ----
+					const lowestEndY = Math.max(...targets.map(t => t.end.y));
+			
+					// midpoint between start and lowest target, biased by ratio
+					const sharedMidY =
+						start.y + (lowestEndY - start.y) * midRatio;
+			
+					// ---- DRAW ----
+					targets.forEach(({
+						end
+					}) => {
+						const dx = end.x - start.x;
+						const dy = end.y - start.y;
+						const distance = Math.hypot(dx, dy);
+			
+						const isShort = distance < shortThreshold;
+			
+						const arrowWidth = isShort ?
+							parseFloat(styles.getPropertyValue("--arrow-short-width")) || 5 :
+							parseFloat(styles.getPropertyValue("--arrow-width")) || 8;
+			
+						const arrowHeight = isShort ?
+							parseFloat(styles.getPropertyValue("--arrow-short-height")) || 6 :
+							parseFloat(styles.getPropertyValue("--arrow-height")) || 10;
+			
+						const lineWidth = parseFloat(styles.getPropertyValue("--line-width"))
+			
+			
+						let tipX, tipY, angle;
+			
+						if (isShort) {
+							// ---- SHORT ARROW (centered) ----
+							tipX = (start.x + end.x) / 2;
+							tipY = (start.y + end.y) / 2 + arrowHeight / 2;
+			
+							const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+							line.setAttribute("x1", tipX);
+							line.setAttribute("y1", tipY);
+							line.setAttribute("x2", tipX);
+							line.setAttribute("y2", tipY + 0.1);
+			
+							this.svg.appendChild(line);
+			
+							angle = Math.atan2(end.y - start.y, end.x - start.x);
+						} else {
+							// ---- LONG ARROW (right-angle path) ----
+			
+							tipX = end.x;
+							tipY = end.y;
+			
+							// 3 segments:
+							// 1. vertical down from start → sharedMidY
+							// 2. horizontal → end.x
+							// 3. vertical → end.y
+			
+							const extra = (start.x == end.x) ? 0 : (start.x > end.x) ? lineWidth / 2 : -lineWidth / 2
+			
+							const segments = [
+								[start.x, start.y, start.x, sharedMidY],
+								[start.x, sharedMidY, end.x - extra, sharedMidY],
+								[end.x, sharedMidY, end.x, end.y - arrowHeight]
+							];
+			
+							segments.forEach(([x1, y1, x2, y2]) => {
+								const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+								line.setAttribute("x1", x1);
+								line.setAttribute("y1", y1);
+								line.setAttribute("x2", x2);
+								line.setAttribute("y2", y2);
+								this.svg.appendChild(line);
+							});
+			
+			
+							// Angle for arrowhead follows only the last segment
+							const lastSegment = segments[segments.length - 1];
+							const [lastX1, lastY1, lastX2, lastY2] = lastSegment;
+							angle = Math.atan2(lastY2 - lastY1, lastX2 - lastX1);
+						}
+			
+						// ---- ARROWHEAD ----
+			
+						const leftX = tipX - arrowHeight * Math.cos(angle) + (arrowWidth * Math.sin(angle)) / 2;
+						const leftY = tipY - arrowHeight * Math.sin(angle) - (arrowWidth * Math.cos(angle)) / 2;
+			
+						const rightX = tipX - arrowHeight * Math.cos(angle) - (arrowWidth * Math.sin(angle)) / 2;
+						const rightY = tipY - arrowHeight * Math.sin(angle) + (arrowWidth * Math.cos(angle)) / 2;
+			
+						const triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+						triangle.setAttribute("points", `${tipX},${tipY} ${leftX},${leftY} ${rightX},${rightY}`);
+						this.svg.appendChild(triangle);
+					});
+				}
+			
+			}
+			
+			customElements.define("arrow-connector", ArrowConnector);			        
+					
+		</script>
+	</body>
+</html>
