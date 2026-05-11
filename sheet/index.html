@@ -80,8 +80,8 @@
 			@font-face {
 			font-family: "PokemonClassic";
 			src:
-			url("./PokemonClassic-Regular.woff") format("woff");
 			url("./PokemonClassic-Regular.otf") format("opentype"),
+			url("./PokemonClassic-Regular.woff") format("woff");
 			url("./Pokemon Classic.ttf") format("truetype"),
 			}
 			body {
@@ -419,19 +419,55 @@
 			display: none !important;
 			}
 			/*****************************************************************/
-			labeled-input.vision-box input#vision_value {
-			position: absolute;
-			width: 50%;
-			left: 00%;
-			bottom: 0px;
-			box-sizing: border-box;
-			padding: 0px;
-			font-size: 12px;
-			height: 1.5em;
-			}
-			labeled-input.proficient input[list]::-webkit-calendar-picker-indicator {
-			display: none !important;
-			}
+	labeled-input.square.vision-box input.input0 {
+		padding-bottom: 1.2em;
+	}
+
+	labeled-input.vision-box .vision-div{
+		#width: 70%;
+		border-top-right-radius: 4px;
+		position: absolute;
+		bottom:0; 
+		left: 0;
+		padding-right: 3px;
+		padding-top: 3px;
+		background-color: var(--inner-grid-bg)
+
+
+	}
+
+	labeled-input.vision-box input#vision_value {
+		width: 100%;
+		box-sizing: border-box;
+		font-size: 12px;
+		height: 1.3em;
+		padding: 0px;
+	}
+
+	labeled-input.vision-box .vision-label{
+		font-size: 7px; 
+		letter-spacing: 0px; 
+				padding: 0px;
+    margin: 0px;
+    margin-bottom: 3px;
+		line-height:  1ch;
+	}
+
+
+	/* vertical layout
+
+	labeled-input.vision-box .vision-label{
+	transform: rotate(-90deg); 
+	position: absolute;
+	font-size: 7px; 
+	left: -1.5em;
+	bottom: 2.5em; 
+	letter-spacing: normal; 
+}*/
+
+	labeled-input.proficient input[list]::-webkit-calendar-picker-indicator {
+		display: none !important;
+	}
 			/*****************************************************************/
 			labeled-input.info-box {
 			display: grid;
@@ -725,6 +761,23 @@
 			align-items: center; /* vertically center text */
 			justify-content: center;
 			}
+			
+
+/* hover */
+#app-header a:hover,
+#app-header button:hover {
+	background: color-mix(in srgb, var(--header-content-bg) 85%, white);
+}
+
+/* click / pressed */
+#app-header a:active,
+#app-header button:active {
+	transform: translateY(1px) scale(0.98);
+	opacity: 0.9;
+}
+
+
+
 			/* ===== PRINT: REMOVE HEADER ===== */
 			@media print {
 			#app-header {
@@ -732,9 +785,37 @@
 			}
 			}
 			/*****************************************************************/
+.toast {
+		position: fixed;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%) translateY(20px);
+		background: #222;
+		color: white;
+		padding: 12px 18px;
+		border-radius: 8px;
+		font-size: 14px;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s ease, transform 0.25s ease;
+		z-index: 9999;
+	}
+
+	.toast.show {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}			
+			@media print {
+	.toast.show {
+		display: none !important;
+		transition: 0s;
+	}
+			}			
+			
 		</style>
 	</head>
 	<body>
+	<div id="toast" class="toast">Link copied to clipboard!</div>
 		<div id="app-header">
 			<a id="project-link" href="https://www.explorers-pmd-rpg.com/" target="_blank">
 			PMD Explorers!
@@ -743,7 +824,11 @@
 			PMD-E! Tools
 			</a>
 			<button onclick="window.print()">Save Sheet</button>
+			<button onclick="window.copyCurrentURL()">Copy Share Link</button>
+
 			<button onclick="window.clearURLAndReload()">Clear Sheet</button>
+			
+			
 			<div id="theme-wrapper">
 				<label for="theme-select">Theme:</label>
 				<select id="theme-select"></select>
@@ -1734,6 +1819,7 @@
 			window.addEventListener("beforeprint", () => {
 				previousTheme = root.getAttribute("data-theme");
 				root.setAttribute("data-theme", "paper");
+				
 			});
 			
 			window.addEventListener("afterprint", () => {
@@ -2464,7 +2550,7 @@
 					const current = location.hash.slice(1);
 					if (encoded === current) return;
 			
-					if (true)
+					if (false)
 						testEncodingMethods(nodeList);
 			
 					//location.hash = encoded;
@@ -2479,6 +2565,24 @@
 			}
 			
 			
+function showToast(message) {
+	const toast = document.getElementById("toast");
+	toast.textContent = message;
+
+	// hide first
+	toast.classList.remove("show");
+
+	clearTimeout(toast._timeout);
+
+	// small delay ensures animation/state reset
+	setTimeout(() => {
+		toast.classList.add("show");
+	}, 100);
+
+	toast._timeout = setTimeout(() => {
+		toast.classList.remove("show");
+	}, 2500);
+}
 			// ===============================
 			// Load
 			// ===============================
@@ -2564,6 +2668,17 @@
 				clearURL();
 				location.reload();
 			};
+			
+			
+				window.copyCurrentURL= async function () {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			showToast("Link copied to clipboard!");
+		} catch (err) {
+			console.error("Failed to copy URL:", err);
+			showToast("Failed to copy link");
+		}
+	}
 			
 			
 			
@@ -2787,9 +2902,18 @@
 			
 					if (type.includes("vision-box")) {
 						this.classList.add("vision-box");
+						this.vision_div = document.createElement("div");
 						const vision_value = this._createInput("", "vision_value");
-						vision_value.customType = "number"
 						
+this.second_label = document.createElement("label");
+this.second_label.classList.add("vision-label")
+this.vision_div.classList.add("vision-div")
+this.second_label.textContent ="tiles" //"↱tiles"
+this.vision_div.appendChild(this.second_label);
+this.vision_div.appendChild(vision_value);
+this.wrapper.appendChild(this.vision_div);
+
+						vision_value.customType = "number"
 						}
 			
 			

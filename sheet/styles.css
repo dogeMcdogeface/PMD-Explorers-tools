@@ -93,17 +93,17 @@
      GRID LAYOUT COLORS
   ========================= */
 
-  --main-grid-bg: #f7f7fb;          /* very soft lavender-tinted white */
+  --main-grid-bg: #fee9ff;          /* very soft lavender-tinted white */
   --main-grid-border: transparent;
 
-  --inner-grid-bg: #e9ecf5;         /* soft cool pastel panel */
+  --inner-grid-bg: #dff6e9;         /* soft cool pastel panel */
   --inner-grid-border: #d6dbea;     /* subtle separation */
 
   /* =========================
      INPUT COLORS
   ========================= */
 
-  --input-border: #c9cfe0;          /* gentle grey-blue */
+  --input-border: #f2e0f2;          /* gentle grey-blue */
   --input-bg: #ffffff;              /* clean, readable */
   --input-autofill-bg: #dff4ff;     /* soft pastel cyan highlight */
 
