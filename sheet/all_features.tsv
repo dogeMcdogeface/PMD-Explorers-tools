@@ -120,8 +120,8 @@ Colour Change	Whenever this Pokémon is hit by a damaging Move, their Type(s) wi
 Damp	This Pokémon dampens its surroundings, preventing explosions from Powder, Self-Destruct and Explosion.		6	Rare Quality
 Dancer	Whenever a Dance-based Move is used in the same Room as this Pokemon, this Pokemon copies that Move immediately.		6	Rare Quality
 Defiant	Whenever this Pokemon's stats are lowered, this Pokemon gains Atk Up 2.		6	Rare Quality
-Drizzle	Whenever this Pokemon enters a Battle, the Current Floor's Weather becomes Harsh Sunlight.		6	Rare Quality
-Drought	Whenever this Pokemon enters a Battle, the Current Floor's Weather becomes Rain.		6	Rare Quality
+Drought	Whenever this Pokemon enters a Battle, the Current Floor's Weather becomes Harsh Sunlight.		6	Rare Quality
+Drizzle	Whenever this Pokemon enters a Battle, the Current Floor's Weather becomes Rain.		6	Rare Quality
 Electric Surge	Whenever this Pokemon enters a Battle, the Room has the Electric Terrain effect for 5 turns.		6	Rare Quality
 Flower Gift	If the Weather is Harsh Sunlight, the Move Power of this Pokemon and its Team Members increases by 1.		6	Rare Quality
 Fluffy	This Pokemon takes half damage from Physical Moves, but double damage from Fire-Type Moves.	Pokemon with fur	6	Rare Quality
@@ -163,7 +163,7 @@ Shadow Tag	Opposing Pokémon cannot flee from the current room or Hallway in bat
 Shield Dust	This Pokemon ignores the secondary effect of Moves.	Bug-Type Pokemon	6	Rare Quality
 Snow Warning	Whenever this Pokemon enters a Battle, the Current Floor's Weather becomes a Snowstorm.		6	Rare Quality
 Speed Boost	Whenever this Pokemon finishes their turn in Battle, they get Spe Up 2.		6	Rare Quality
-Steam Engine	This Pokemon and its Team Members cannot be affected by Moves that prevent the use of Moves.	Fire-Type Pokemon	6	Rare Quality
+Steam Engine	Whenever this Pokémon is damaged by a Water-Type Move, Spe Up 6	Fire-Type Pokemon	6	Rare Quality
 Stench	When this Pokemon is hit by a Physical Move, roll a d6. On a 6, the attacker is Frightened.	Poison-Type Pokemon	6	Rare Quality
 Storm Drain	Whenever a Foe's Water-type Move is used in the same Room or Hallway as this Pokemon, it is redirected and deals no damage, and the Pokemon with this ability gets Sp.Atk Up 2.	Water-Type & Grass-Type Pokemon	6	Rare Quality
 Strong	This Pokemon gains Strength as a Major Skill.	Must have Strength as a Minor Skill	6	Rare Quality
@@ -181,7 +181,7 @@ Contrary	Attempts to boost the stats of this Pokemon lower them instead, and vic
 Friend Guard	Damage dealt to Team Members deal half damage. This effect cannot stack.	Friendship Track Cleared 4 Times.	9	Rare Quality
 Huge Power	This Pokemon has the Move Power of all Physical Moves increased by 1.		9	Rare Quality
 Protean	Whenever this Pokemon uses a Move, its Type changes to match the Move's Type.		9	Rare Quality
-Resistant (2)	This Pokemon takes half damage from Special Moves.		9	Rare Quality
+R_esistant (error)	This Pokemon takes half damage from Special Moves.		9	Rare Quality
 Serene Grace	This Pokemon gains 1d6 to their Status Check whenever they apply an additional affect from their Physical or Special Moves.		9	Rare Quality
 Skill Link	This Pokemon's Multistrike Moves always hit 5 times.	Must know atleast 1 Multistrike Move	9	Rare Quality
 Super Luck	This Pokemon scores a Critical Hit on their Moves on a 5-6.		9	Rare Quality
